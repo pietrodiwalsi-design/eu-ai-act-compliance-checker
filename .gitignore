@@ -1,0 +1,46 @@
+# Node / Next.js
+node_modules/
+.next/
+out/
+build/
+.env.local
+.env.*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Env files
+.env
+.env.local
+*.env
+!.env.example
+!.env.local.example
+
+# Data / DB
+backend/data/chroma_db/
+backend/data/knowledge_base/*.pdf
+*.db
+*.sqlite
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
