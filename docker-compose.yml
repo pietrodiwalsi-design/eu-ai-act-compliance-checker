@@ -2,7 +2,9 @@ version: '3.9'
 
 services:
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.local
     container_name: eu-ai-act-backend
     ports:
       - "8000:8000"
@@ -20,7 +22,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.local
     container_name: eu-ai-act-frontend
     ports:
       - "3000:3000"
