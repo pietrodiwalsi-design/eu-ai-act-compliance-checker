@@ -26,8 +26,12 @@ HIGH_RISK_SECTORS = {
 
 # Answers that trigger prohibited-practice classification (Article 5)
 PROHIBITED_TRIGGERS = {
-    "biometric_data":  {"yes_realtime_public"},               # Art. 5(1)(d)
-    "scoring_profiling": {"yes_social"},                      # Art. 5(1)(c) — social scoring
+    "biometric_data":            {"yes_realtime_public"},               # Art. 5(1)(d)
+    "scoring_profiling":         {"yes_social"},                      # Art. 5(1)(c) — social scoring
+    "manipulation_technique":    {"yes_subliminal"},                  # Art. 5(1)(a)
+    "vulnerability_exploitation": {"yes"},                           # Art. 5(1)(b)
+    "emotion_recognition_context": {"yes_workplace", "yes_education"}, # Art. 5(1)(e)
+    "biometric_categorisation":  {"yes_sensitive"},                 # Art. 5(1)(f)
 }
 
 

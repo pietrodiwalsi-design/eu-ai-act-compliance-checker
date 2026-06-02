@@ -18,16 +18,21 @@ from app.models.assessment import (
     AssessmentResponse,
     ComplianceReport,
     RiskTier,
+    WhatIfRequest,
+    WhatIfResponse,
 )
 from app.services.classifier import classify_risk_tier
+from app.services.deterministic_checks import run_deterministic_checks
+from app.services.persistence import list_assessments as persistence_list_assessments, load_report, save_assessment, save_report
 from app.services.rag import rag_pipeline
 from app.services.remediation import calculate_overall_score, enrich_checks_with_remediation
+from langchain_anthropic import ChatAnthropic
+from app.prompts.classification import WHAT_IF_PROMPT
+import os
 
 router = APIRouter()
 
-# In-memory store for Phase 1 (replace with DB in Phase 4)
-_assessments: dict[str, AssessmentResponse] = {}
-_reports: dict[str, ComplianceReport] = {}
+
 
 
 @router.post("/assess", response_model=ComplianceReport, status_code=201)
@@ -49,13 +54,19 @@ async def run_assessment(request: AssessmentRequest) -> ComplianceReport:
         # ── 1. Classify risk tier ────────────────────────────────────────────
         risk_tier: RiskTier = classify_risk_tier(request.answers)
 
-        # ── 2. RAG + LLM analysis ────────────────────────────────────────────
-        checks = await asyncio.wait_for(
+        # ── 2. Deterministic checks (fast, rule-based) ──────────────────────
+        deterministic_checks = run_deterministic_checks(request.answers, risk_tier)
+
+        # ── 3. RAG + LLM analysis ────────────────────────────────────────────
+        llm_checks = await asyncio.wait_for(
             rag_pipeline.generate_compliance_analysis(request.answers, risk_tier),
             timeout=170.0,  # leave buffer within 3-min SLA
         )
 
-        # ── 3. Enrich with remediation ───────────────────────────────────────
+        # Merge deterministic + LLM checks (deterministic first, then LLM)
+        checks = deterministic_checks + llm_checks
+
+        # ── 4. Enrich with remediation ───────────────────────────────────────
         checks = enrich_checks_with_remediation(checks, risk_tier)
 
         # ── 4. Calculate overall score ───────────────────────────────────────
@@ -72,15 +83,16 @@ async def run_assessment(request: AssessmentRequest) -> ComplianceReport:
             processing_time_seconds=round(time.monotonic() - start_time, 2),
         )
 
-        # Persist (in-memory Phase 1)
-        _reports[report.id] = report
-        _assessments[assessment_id] = AssessmentResponse(
+        # Persist to file system
+        save_report(report)
+        assessment = AssessmentResponse(
             id=assessment_id,
             created_at=datetime.now(timezone.utc),
             answers=request.answers,
             report=report,
             status="complete",
         )
+        save_assessment(assessment)
 
         return report
 
@@ -96,13 +108,65 @@ async def run_assessment(request: AssessmentRequest) -> ComplianceReport:
 @router.get("/assessments", response_model=List[AssessmentResponse])
 async def list_assessments() -> List[AssessmentResponse]:
     """Return all assessments (newest first)."""
-    return sorted(_assessments.values(), key=lambda a: a.created_at, reverse=True)
+    return persistence_list_assessments()
 
 
 @router.get("/reports/{report_id}", response_model=ComplianceReport)
 async def get_report(report_id: str) -> ComplianceReport:
     """Fetch a specific compliance report by ID."""
-    report = _reports.get(report_id)
+    report = load_report(report_id)
     if not report:
         raise HTTPException(status_code=404, detail=f"Report {report_id!r} not found")
     return report
+
+
+@router.post("/whatif", response_model=WhatIfResponse)
+async def what_if_analysis(request: WhatIfRequest) -> WhatIfResponse:
+    """
+    Re-evaluate risk tier and obligations for a different deployment context.
+    Uses the WHAT_IF_PROMPT to call the LLM.
+    """
+    original_tier = classify_risk_tier(request.original_answers)
+
+    llm = ChatAnthropic(
+        model="claude-3-5-sonnet-20241022",
+        api_key=os.getenv("ANTHROPIC_API_KEY"),
+        temperature=0.3,
+    )
+
+    chain = WHAT_IF_PROMPT | llm
+    response = await chain.ainvoke({
+        "answers": request.original_answers,
+        "original_tier": original_tier.value,
+        "new_context": request.new_context,
+    })
+
+    # Simple parsing - in production this would be more robust
+    content = response.content
+    new_tier = original_tier  # fallback
+    if "prohibited" in content.lower():
+        new_tier = RiskTier.PROHIBITED
+    elif "high_risk" in content.lower() or "high-risk" in content.lower():
+        new_tier = RiskTier.HIGH_RISK
+    elif "limited_risk" in content.lower():
+        new_tier = RiskTier.LIMITED_RISK
+    else:
+        new_tier = RiskTier.MINIMAL_RISK
+
+    changed = new_tier != original_tier
+
+    # Extract top 3 obligations heuristically
+    key_obligations = []
+    for line in content.split("\n"):
+        if any(kw in line.lower() for kw in ["article", "obligation", "must", "shall"]):
+            key_obligations.append(line.strip())
+            if len(key_obligations) >= 3:
+                break
+
+    return WhatIfResponse(
+        original_tier=original_tier,
+        new_tier=new_tier,
+        changed=changed,
+        analysis=content,
+        key_obligations=key_obligations[:3] or ["Review full analysis for obligations"],
+    )

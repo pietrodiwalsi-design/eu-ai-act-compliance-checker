@@ -1,0 +1,17 @@
+Article 13 — Transparency and Provision of Information to Deployers
+
+1. High-risk AI systems shall be designed and developed in such a way as to ensure that their operation is sufficiently transparent to enable deployers to interpret the system's output and use it appropriately. An appropriate type and degree of transparency shall be ensured, with a view to achieving compliance with the relevant obligations of the provider and the deployer set out in Chapter III.
+
+2. High-risk AI systems shall be accompanied by instructions for use in an appropriate digital format or otherwise that include concise, complete, correct and clear information that is relevant, accessible and comprehensible to deployers. The instructions for use shall contain at least the following information:
+   (a) the identity and the contact details of the provider and, where applicable, of its authorised representative;
+   (b) the characteristics, capabilities and limitations of performance of the high-risk AI system, including:
+      (i) its intended purpose;
+      (ii) the level of accuracy, robustness and cybersecurity against which the high-risk AI system has been tested and validated and which can be expected, and any known or foreseeable circumstances that may have an impact on that expected level of accuracy, robustness and cybersecurity;
+      (iii) any known or foreseeable circumstance, related to the use of the high-risk AI system in accordance with its intended purpose or under conditions of reasonably foreseeable misuse, which may lead to risks to the health and safety or fundamental rights;
+      (iv) its performance as regards the persons or groups of persons on which the system is intended to be used;
+      (v) the specifications for the input data, or any other relevant information in terms of the training, validation and testing data sets used, including information about the data collection and labelling processes and about the methodologies used;
+   (c) the changes to the high-risk AI system and its performance that have been pre-determined by the provider at the moment of the initial conformity assessment, if any;
+   (d) the human oversight measures referred to in Article 14, including the technical measures put in place to facilitate the interpretation of the outputs of the high-risk AI system by the deployers;
+   (e) the computational and hardware resources needed, the expected lifetime of the high-risk AI system and any necessary maintenance and care measures, including their frequency, to ensure the proper functioning of that AI system, including as regards software updates.
+
+Source: Regulation (EU) 2024/1689, Article 13.

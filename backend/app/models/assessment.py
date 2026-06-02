@@ -44,3 +44,16 @@ class AssessmentResponse(BaseModel):
     answers:    Dict[str, object]
     report:     Optional[ComplianceReport] = None
     status:     Literal["pending", "processing", "complete", "error"] = "pending"
+
+
+class WhatIfRequest(BaseModel):
+    original_answers: Dict[str, object]
+    new_context: str  # free-text description of the new deployment context
+
+
+class WhatIfResponse(BaseModel):
+    original_tier: RiskTier
+    new_tier: RiskTier
+    changed: bool
+    analysis: str  # LLM narrative response
+    key_obligations: List[str]  # top 3 new obligations as list

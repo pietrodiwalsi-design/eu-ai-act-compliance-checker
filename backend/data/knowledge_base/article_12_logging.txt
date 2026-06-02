@@ -1,0 +1,18 @@
+Article 12 — Record-Keeping
+
+1. High-risk AI systems shall be designed and developed with the technical capability to automatically record events (logs) while the high-risk AI system is operating. Those logging capabilities shall ensure a level of traceability of the functioning of the AI system throughout its lifecycle that is appropriate to the intended purpose of the system.
+
+2. Logging capabilities shall enable, in particular:
+   (a) the identification of situations that may result in the high-risk AI system presenting a risk within the meaning of Article 79(1) or in a substantial modification;
+   (b) the facilitation of the post-market monitoring referred to in Article 72;
+   (c) the monitoring of the operation of high-risk AI systems, in particular in the case of systems that continue to learn after being placed on the market or put into service.
+
+3. For high-risk AI systems referred to in points 1(a) to 1(c) and 1(e) and (g) of Annex III (biometric identification, critical infrastructure, education, law enforcement), the logging capabilities shall provide, at a minimum:
+   (a) recording of the period of each use of the system (start date and time and end date and time of each use);
+   (b) the reference database against which input data has been checked;
+   (c) the input data in respect of which the search has led to a match;
+   (d) the identification of the natural persons involved in the verification of the results.
+
+4. The logs referred to in this Article shall be kept for a period appropriate to the intended purpose of the high-risk AI system and, in any event, for no less than six months, unless provided otherwise in applicable Union or national law, in particular in the area of law enforcement.
+
+Source: Regulation (EU) 2024/1689, Article 12.

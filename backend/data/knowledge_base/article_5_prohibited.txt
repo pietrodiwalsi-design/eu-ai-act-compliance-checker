@@ -1,0 +1,26 @@
+Article 5 — Prohibited AI Practices (Regulation (EU) 2024/1689)
+
+1. The following AI practices shall be prohibited:
+
+(a) the placing on the market, putting into service or use of an AI system that deploys subliminal techniques beyond a person's consciousness or purposefully manipulative or deceptive techniques, with the objective or the effect of materially distorting a person's or a group of persons' behaviour by appreciably impairing the person's ability to make an informed decision, thereby causing the person to take a decision that that person would not have otherwise taken in a manner that causes or is likely to cause that person, another person or group of persons significant harm;
+
+(b) the placing on the market, putting into service or use of an AI system that exploits any of the vulnerabilities of a person or a specific group of persons due to their age, disability or a specific social or economic situation, with the objective or the effect of materially distorting the behaviour of a person belonging to that group in a manner that causes or is likely to cause that person or another person significant harm;
+
+(c) the placing on the market, putting into service or use of AI systems by public authorities or on their behalf for the evaluation or classification of natural persons or groups thereof over a certain period of time based on their social behaviour or known, inferred or predicted personal or personality characteristics, with the social score leading to either or both of the following:
+   (i) detrimental or unfavourable treatment of certain natural persons or groups thereof in social contexts that are unrelated to the contexts in which the data was originally generated or collected;
+   (ii) detrimental or unfavourable treatment of certain natural persons or groups thereof that is unjustified or disproportionate to their social behaviour or its gravity;
+
+(d) the use of real-time remote biometric identification systems in publicly accessible spaces for the purpose of law enforcement, unless and in so far as such use is strictly necessary for one of the following objectives:
+   (i) the targeted search for specific potential victims of crime;
+   (ii) the prevention of a specific, substantial and imminent threat to the life or physical safety of natural persons or of a terrorist attack;
+   (iii) the localisation or identification of a person suspected of having committed a criminal offence, for the purpose of conducting a criminal investigation or prosecution or executing a criminal penalty;
+
+(e) the placing on the market, putting into service or use of AI systems for the inference of emotions of a natural person in the areas of workplace and education institutions, except where the use of the AI system is intended to be put in place or into the market for medical or safety reasons;
+
+(f) the placing on the market, putting into service or use of AI systems for biometric categorisation that categorise natural persons according to sensitive or protected attributes or characteristics or based on the inference of those attributes or characteristics;
+
+(g) the placing on the market, putting into service or use of AI systems for predictive policing that make an assessment or a prediction of the occurrence or reoccurrence of criminal offences, based solely on the profiling of a natural person or on the assessment of their personality traits and characteristics;
+
+(h) the placing on the market, putting into service or use of AI systems that create or expand facial recognition databases through the untargeted scraping of facial images from the internet or CCTV footage.
+
+Source: Regulation (EU) 2024/1689, Article 5 (as published in the Official Journal of the European Union, 12 July 2024).

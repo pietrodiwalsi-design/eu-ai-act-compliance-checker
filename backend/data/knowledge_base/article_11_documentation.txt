@@ -1,0 +1,17 @@
+Article 11 — Technical Documentation
+
+1. The technical documentation of a high-risk AI system shall be drawn up before that system is placed on the market or put into service and shall be kept up-to date. The technical documentation shall be drawn up in such a way as to demonstrate that the high-risk AI system complies with the requirements set out in this Chapter and provide national competent authorities and notified bodies with the necessary information to assess the compliance of the AI system with those requirements. It shall contain, at a minimum, the elements listed in Annex IV.
+
+2. Where a high-risk AI system related to a product covered by the Union harmonisation legislation listed in Annex I is placed on the market or put into service together with the product, the technical documentation referred to in paragraph 1 shall be drawn up as a single documentation containing the information set out in Annex IV as well as the information required under those legal acts.
+
+3. The Commission is empowered to adopt delegated acts in accordance with Article 97 in order to amend Annex IV, where necessary, to ensure that, in light of technical progress, the technical documentation provides all the necessary information to assess the compliance of the system with the requirements set out in this Chapter.
+
+Annex IV — Technical Documentation (key elements)
+- A general description of the AI system including its intended purpose, the name and contact details of the provider, a description of the hardware and software components, and how the system interacts with hardware or software that is not part of the AI system itself.
+- A detailed description of the elements of the AI system and of the process for its development, including the methods and steps performed for the development, the design specifications, the architecture, the data requirements, the training methodologies, the testing and validation procedures, and the risk management system.
+- Information about the data used for training, validation and testing, including its provenance, scope, main characteristics, and how it was obtained and selected.
+- A description of the human oversight measures and the technical measures put in place to facilitate the interpretation of the outputs of the AI system.
+- A description of the mechanisms ensuring the accuracy, robustness and cybersecurity of the AI system.
+- A description of the relevant changes made by the provider to the system through its lifecycle.
+
+Source: Regulation (EU) 2024/1689, Article 11 and Annex IV.
