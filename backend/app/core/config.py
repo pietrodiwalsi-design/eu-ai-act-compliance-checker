@@ -25,8 +25,8 @@ class Settings(BaseSettings):
     JWT_ALGORITHM:     str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24h
 
-    # CORS
-    ALLOWED_ORIGINS: list[str] = ["http://localhost:3000", "https://your-production-domain.com"]
+    # CORS — set to ["*"] in Render; tighten once frontend URL is known
+    ALLOWED_ORIGINS: list[str] = ["*"]
 
     # Performance
     MAX_REPORT_TIMEOUT_SECONDS: int = 180  # 3 min SLA

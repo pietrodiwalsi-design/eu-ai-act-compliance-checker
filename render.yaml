@@ -1,0 +1,46 @@
+services:
+  # ── Backend: FastAPI ─────────────────────────────────────────────────────────
+  - type: web
+    name: eu-ai-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false          # set manually in Render dashboard (secret)
+      - key: LLM_MODEL
+        value: claude-sonnet-4-5
+      - key: OPENAI_API_KEY
+        value: ""
+      - key: CHROMA_PERSIST_DIR
+        value: ./data/chroma_db
+      - key: KNOWLEDGE_BASE_DIR
+        value: ./data/knowledge_base
+      - key: COLLECTION_NAME
+        value: eu_ai_act
+      - key: ALLOWED_ORIGINS
+        value: '["*"]'       # tightened once frontend URL is known
+      - key: DEBUG
+        value: "false"
+      - key: JWT_SECRET_KEY
+        generateValue: true  # Render auto-generates a secure random value
+
+  # ── Frontend: Next.js ────────────────────────────────────────────────────────
+  - type: web
+    name: eu-ai-frontend
+    runtime: node
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: node .next/standalone/server.js
+    plan: free
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: ""            # empty = same-origin proxy via route handler
+      - key: BACKEND_URL
+        sync: false          # set to https://eu-ai-backend.onrender.com after backend deploys
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3000"

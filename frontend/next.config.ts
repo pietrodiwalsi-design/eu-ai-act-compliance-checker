@@ -2,8 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: 'standalone',
-  // API proxy handled by src/app/api/v1/[...path]/route.ts
-  // No rewrites needed — avoids Next.js proxy timeout on long LLM calls
+  // API proxy: src/app/api/v1/[...path]/route.ts → BACKEND_URL (server-side only)
+  // Browser never touches the backend URL directly — no CORS, no port issues
 };
 
 export default nextConfig;
