@@ -17,7 +17,7 @@ export default function AssessPage() {
     setError(null);
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
       const res = await fetch(`${apiUrl}/api/v1/assess`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

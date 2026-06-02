@@ -1,0 +1,158 @@
+{
+  "id": "d942185d-3300-46f2-a244-e5e064199751",
+  "created_at": "2026-06-02T08:26:48.071211Z",
+  "answers": {
+    "system_description": "CV screening",
+    "sector": "employment",
+    "uses_biometrics": "no",
+    "social_scoring": "no",
+    "makes_automated_decisions": "yes",
+    "affects_fundamental_rights": "yes",
+    "has_human_oversight": "yes",
+    "data_governance": "yes",
+    "technical_documentation": "yes",
+    "transparency_measures": "yes",
+    "accuracy_testing": "yes",
+    "intended_use": "HR",
+    "deployment_region": "EU",
+    "gpai_model": "no",
+    "systemic_risk": "no"
+  },
+  "report": {
+    "id": "2ad8a456-e5d6-4b45-a748-c318248c0f90",
+    "assessment_id": "d942185d-3300-46f2-a244-e5e064199751",
+    "risk_tier": "minimal_risk",
+    "overall_score": 75,
+    "checks": [
+      {
+        "article": "Article 11",
+        "requirement": "Technical documentation (Annex IV)",
+        "status": "pass",
+        "score": 95,
+        "rationale": "Technical documentation is complete and maintained.",
+        "remediation": null,
+        "source_citation": "The technical documentation of a high-risk AI system shall be drawn up before that system is placed on the market or put into service and shall be kept up-to date."
+      },
+      {
+        "article": "Article 5",
+        "requirement": "Prohibition of AI systems that deploy subliminal techniques, exploit vulnerabilities, or perform social scoring",
+        "status": "pass",
+        "score": 100,
+        "rationale": "The CV screening system does not use biometrics, does not perform social scoring, and is not designed to deploy subliminal techniques or exploit vulnerabilities. The system operates transparently in the employment sector for HR purposes.",
+        "remediation": null,
+        "source_citation": "Article 5 addresses prohibited AI practices including social scoring and exploitation of vulnerabilities. The system's declared parameters (social_scoring: no, uses_biometrics: no) indicate compliance with these prohibitions."
+      },
+      {
+        "article": "Article 10",
+        "requirement": "Training, validation and testing data sets must be relevant, representative, free of errors and complete with appropriate statistical properties",
+        "status": "warning",
+        "score": 70,
+        "rationale": "While data governance is confirmed as 'yes', the questionnaire lacks specific details about data quality criteria, bias minimization measures, and representativeness of the training data sets. CV screening systems pose discrimination risks if data sets are not properly curated.",
+        "remediation": "Provide detailed documentation demonstrating that training, validation and testing data sets are relevant, representative, free of errors, and designed to minimize bias that could lead to discrimination. Include statistical properties and demographic representativeness analysis.",
+        "source_citation": "Training, validation and testing data sets shall be relevant, representative, free of errors and complete. They shall have the appropriate statistical properties, including as regards the persons or groups of persons on which the high-risk AI system is intended to be used."
+      },
+      {
+        "article": "Article 10",
+        "requirement": "Data sets must be designed to minimize bias and ensure sufficient representativeness to prevent discrimination prohibited under Union law",
+        "status": "warning",
+        "score": 65,
+        "rationale": "The system affects fundamental rights in employment context, making bias prevention critical. While data governance exists, specific bias minimization strategies and representativeness validation for the target population are not documented in the questionnaire responses.",
+        "remediation": "Implement and document specific measures to minimize introduction of bias in training data. Conduct representativeness analysis ensuring data sets reflect the population for which the system is intended, with particular attention to protected characteristics under EU anti-discrimination law.",
+        "source_citation": "Training, validation and testing data sets shall be designed and selected with a view to minimising the introduction of bias that could lead to discrimination prohibited under Union law and to ensuring that the data sets are sufficiently representative of the population or the target group for which the high-risk AI system is intended to be used."
+      },
+      {
+        "article": "Article 10",
+        "requirement": "Data sets must account for geographical, contextual, behavioural or functional settings specific to the intended use",
+        "status": "warning",
+        "score": 70,
+        "rationale": "The system is deployed in the EU for HR purposes, but the questionnaire does not specify whether data sets account for EU-specific employment contexts, regional variations, or functional settings particular to CV screening in different industries or roles.",
+        "remediation": "Document how training, validation and testing data sets account for EU geographical context, specific employment sectors, and functional settings relevant to CV screening. Ensure data reflects the diversity of EU labor markets and employment practices.",
+        "source_citation": "Training, validation and testing data sets shall take into account, to the extent required by the intended purpose, the characteristics or elements that are particular to the specific geographical, contextual, behavioural or functional setting within which the high-risk AI system is intended to be used."
+      },
+      {
+        "article": "Article 11",
+        "requirement": "Technical documentation must include general description, system architecture, data sets description, human oversight measures, accuracy/robustness measures, and risk management system",
+        "status": "warning",
+        "score": 75,
+        "rationale": "Technical documentation is confirmed as 'yes', but the questionnaire does not provide evidence of completeness. The documentation must include detailed system architecture, algorithms, data flows, and comprehensive descriptions of all required elements for a high-risk employment AI system.",
+        "remediation": "Ensure technical documentation contains all mandatory elements: general description with provider details, detailed system architecture including algorithms and data flows, comprehensive data set descriptions with governance practices, human oversight measures, accuracy/robustness/cybersecurity measures, and risk management system documentation.",
+        "source_citation": "The technical documentation shall contain, at a minimum, the following information, as applicable to the high-risk AI system concerned: (a) a general description of the AI system including its intended purpose, the name and contact details of the provider and, where applicable, its authorised representative; (b) a detailed description of the system architecture, including the algorithms, data flows, and processing operations; (c) a description of the data sets used for training, validation and testing, including information on data sources, data collection processes, and data governance practices; (d) a description of the human oversight measures implemented in accordance with Article 14; (e) a description of the accuracy, robustness and cybersecurity measures implemented in accordance with Article 15; (f) a description of the risk management system implemented in accordance with Article 9"
+      },
+      {
+        "article": "Article 11",
+        "requirement": "Technical documentation must include performance metrics, known limitations, biases, and conformity assessment information",
+        "status": "warning",
+        "score": 70,
+        "rationale": "While accuracy testing is confirmed, the questionnaire does not specify whether documentation includes comprehensive performance metrics, known limitations, identified biases, or conformity assessment procedures. These are critical for employment screening systems.",
+        "remediation": "Document system performance including accuracy metrics, robustness measures, any limitations or known biases (particularly regarding protected characteristics), and information on conformity assessment procedures followed including any notified body involvement.",
+        "source_citation": "(g) information on the performance of the AI system, including metrics for accuracy, robustness, and any limitations or known biases; (h) information on the conformity assessment procedure followed and the notified body involved, where applicable."
+      },
+      {
+        "article": "Article 13",
+        "requirement": "High-risk AI systems must be accompanied by instructions for use containing identity/contact details, characteristics, capabilities, limitations, and performance information",
+        "status": "warning",
+        "score": 75,
+        "rationale": "Transparency measures are confirmed as 'yes', but the questionnaire does not verify whether instructions for use are complete, accessible, and comprehensible to deployers. For CV screening, deployers (HR staff) must understand system capabilities and limitations.",
+        "remediation": "Provide comprehensive instructions for use in accessible digital format including: provider identity and contact details, intended purpose, accuracy levels and testing validation, known circumstances affecting performance, computational requirements, maintenance needs, and pre-determined changes to system performance.",
+        "source_citation": "High-risk AI systems shall be accompanied by instructions for use in an appropriate digital format or otherwise that include concise, complete, correct and clear information that is relevant, accessible and comprehensible to deployers. The instructions for use shall contain at least the following information: (a) the identity and the contact details of the provider and, where applicable, of its authorised representative; (b) the characteristics, capabilities and limitations of performance of the high-risk AI system, including: (i) its intended purpose; (ii) the level of accuracy, robustness and cybersecurity against which the high-risk AI system has been tested and validated and which can be expected, and any known or foreseeable circumstances that may have an impact on that expected level of accuracy, robustness and cybersecurity"
+      },
+      {
+        "article": "Article 13",
+        "requirement": "Instructions must describe known circumstances that may lead to risks to health, safety or fundamental rights, and performance regarding target persons or groups",
+        "status": "warning",
+        "score": 65,
+        "rationale": "The system affects fundamental rights in employment decisions. Instructions must explicitly address foreseeable misuse scenarios and performance variations across different demographic groups. The questionnaire does not confirm this critical information is documented.",
+        "remediation": "Document in instructions for use: all known or foreseeable circumstances (including misuse) that may lead to risks to fundamental rights in employment context; system performance data disaggregated by relevant demographic groups; specifications for input data including training/validation/testing methodologies and data collection processes.",
+        "source_citation": "(iii) any known or foreseeable circumstance, related to the use of the high-risk AI system in accordance with its intended purpose or under conditions of reasonably foreseeable misuse, which may lead to risks to the health and safety or fundamental rights; (iv) its performance as regards the persons or groups of persons on which the system is intended to be used; (v) the specifications for the input data, or any other relevant information in terms of the training, validation and testing data sets used, including information about the data collection and labelling processes and about the methodologies used"
+      },
+      {
+        "article": "Article 13",
+        "requirement": "Instructions must include information on pre-determined changes, human oversight measures, and maintenance requirements",
+        "status": "warning",
+        "score": 75,
+        "rationale": "Human oversight is confirmed, but the questionnaire does not verify whether instructions adequately describe the technical measures enabling HR staff to interpret system outputs, pre-determined performance changes, or maintenance requirements including update frequencies.",
+        "remediation": "Include in instructions: any pre-determined changes to system performance from initial conformity assessment; detailed human oversight measures and technical features facilitating output interpretation by HR deployers; computational/hardware requirements; expected system lifetime; necessary maintenance and software update schedules.",
+        "source_citation": "(c) the changes to the high-risk AI system and its performance that have been pre-determined by the provider at the moment of the initial conformity assessment, if any; (d) the human oversight measures referred to in Article 14, including the technical measures put in place to facilitate the interpretation of the outputs of the high-risk AI system by the deployers; (e) the computational and hardware resources needed, the expected lifetime of the high-risk AI system and any necessary maintenance and care measures, including their frequency, to ensure the proper functioning of that AI system, including as regards software updates."
+      },
+      {
+        "article": "Article 14",
+        "requirement": "Human oversight measures must enable individuals to understand system capacities and limitations, monitor operation, and detect anomalies",
+        "status": "warning",
+        "score": 70,
+        "rationale": "Human oversight is confirmed as 'yes', but the questionnaire does not detail whether oversight measures are commensurate with employment decision risks. HR personnel must be able to understand CV screening outputs, detect biases, and identify unexpected performance patterns.",
+        "remediation": "Implement and document human oversight measures enabling HR staff to: properly understand system capacities and limitations; monitor operation and detect anomalies, dysfunctions, and unexpected performance; remain aware of automation bias risks when relying on CV screening recommendations for employment decisions.",
+        "source_citation": "Human oversight measures shall be commensurate with the risks associated with the high-risk AI system and with the context in which it is used. Those measures shall be identified by the provider or, where appropriate, by the deployer, and shall enable the individuals to whom human oversight is assigned to do the following, as appropriate to the circumstances: (a) to properly understand the relevant capacities and limitations of the high-risk AI system and be able to duly monitor its operation, including in view of detecting and addressing anomalies, dysfunctions and unexpected performance; (b) to remain aware of the possible tendency of automatically relying or over-relying on the output produced by a high-risk AI system (automation bias), in particular for high-risk AI systems used to provide information or recommendations for decisions to be taken by natural persons"
+      },
+      {
+        "article": "Article 15",
+        "requirement": "High-risk AI systems must achieve appropriate levels of accuracy, robustness and cybersecurity throughout their lifecycle",
+        "status": "warning",
+        "score": 75,
+        "rationale": "Accuracy testing is confirmed as 'yes', but the questionnaire does not provide evidence of ongoing accuracy monitoring, robustness validation against edge cases, or cybersecurity measures. CV screening systems must maintain performance across diverse candidate profiles and resist manipulation.",
+        "remediation": "Implement and document: accuracy metrics with acceptable thresholds for CV screening decisions; robustness testing against diverse input variations and edge cases; cybersecurity measures protecting against data poisoning, adversarial attacks, and unauthorized access; lifecycle monitoring ensuring sustained performance.",
+        "source_citation": "(e) a description of the accuracy, robustness and cybersecurity measures implemented in accordance with Article 15"
+      },
+      {
+        "article": "Article 50",
+        "requirement": "Transparency obligations for general-purpose AI models and generative AI systems",
+        "status": "na",
+        "score": 0,
+        "rationale": "The system is not identified as a general-purpose AI model (gpai_model: no), therefore Article 50 transparency requirements for GPAI do not apply to this CV screening system.",
+        "remediation": null,
+        "source_citation": "Article 50 applies to general-purpose AI models. The questionnaire indicates gpai_model: no, making this article not applicable."
+      },
+      {
+        "article": "Article 51",
+        "requirement": "Additional obligations for general-purpose AI models with systemic risk",
+        "status": "na",
+        "score": 0,
+        "rationale": "The system does not present systemic risk (systemic_risk: no) and is not a general-purpose AI model (gpai_model: no), therefore Article 51 requirements do not apply.",
+        "remediation": null,
+        "source_citation": "Article 51 applies to general-purpose AI models with systemic risk. The questionnaire indicates systemic_risk: no and gpai_model: no, making this article not applicable."
+      }
+    ],
+    "generated_at": "2026-06-02T08:26:48.070918Z",
+    "processing_time_seconds": 49.98
+  },
+  "status": "complete"
+}

@@ -22,7 +22,7 @@ export default function ReportPage({ params }: ReportPageProps) {
   const [whatIfLoading, setWhatIfLoading] = useState(false);
 
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
     fetch(`${apiUrl}/api/v1/reports/${params.id}`)
       .then((r) => {
         if (!r.ok) throw new Error(`Report not found (${r.status})`);
@@ -43,7 +43,7 @@ export default function ReportPage({ params }: ReportPageProps) {
     if (!report || !whatIfContext.trim()) return;
 
     setWhatIfLoading(true);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
     try {
       const res = await fetch(`${apiUrl}/api/v1/whatif`, {

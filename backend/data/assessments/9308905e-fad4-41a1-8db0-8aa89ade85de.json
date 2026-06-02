@@ -1,0 +1,100 @@
+{
+  "id": "9308905e-fad4-41a1-8db0-8aa89ade85de",
+  "assessment_id": "a21c66b1-6405-4d29-aeb8-a45ad01291d9",
+  "risk_tier": "minimal_risk",
+  "overall_score": 98,
+  "checks": [
+    {
+      "article": "Article 11",
+      "requirement": "Technical documentation (Annex IV)",
+      "status": "pass",
+      "score": 95,
+      "rationale": "Technical documentation is complete and maintained.",
+      "remediation": null,
+      "source_citation": "The technical documentation of a high-risk AI system shall be drawn up before that system is placed on the market or put into service and shall be kept up-to date."
+    },
+    {
+      "article": "Article 5",
+      "requirement": "AI systems must not engage in prohibited practices such as social scoring, biometric categorization, or manipulation.",
+      "status": "pass",
+      "score": 100,
+      "rationale": "The system is a customer support chatbot that does not use biometrics, does not perform social scoring, and does not make automated decisions affecting fundamental rights. It falls outside the scope of prohibited practices.",
+      "remediation": null,
+      "source_citation": "Article 5 addresses prohibited AI practices including social scoring and biometric categorization systems, which are not applicable to this minimal-risk customer support chatbot."
+    },
+    {
+      "article": "Article 10",
+      "requirement": "High-risk AI systems must implement appropriate data governance and management practices.",
+      "status": "na",
+      "score": 0,
+      "rationale": "This requirement applies to high-risk AI systems. The customer support chatbot has been classified as minimal-risk and therefore Article 10 data governance requirements for high-risk systems do not apply.",
+      "remediation": null,
+      "source_citation": "Article 10 requirements are specific to high-risk AI systems and do not apply to minimal-risk systems."
+    },
+    {
+      "article": "Article 11",
+      "requirement": "Technical documentation must include system description, architecture, data sets, human oversight measures, and risk management information.",
+      "status": "na",
+      "score": 0,
+      "rationale": "Article 11 mandates technical documentation for high-risk AI systems. As a minimal-risk customer support chatbot, this system is not subject to the comprehensive technical documentation requirements outlined in Article 11.",
+      "remediation": null,
+      "source_citation": "The technical documentation shall contain, at a minimum, the following information, as applicable to the high-risk AI system concerned: (a) a general description of the AI system including its intended purpose, the name and contact details of the provider and, where applicable, its authorised representative; (b) a detailed description of the system architecture, including the algorithms, data flows, and processing operations;"
+    },
+    {
+      "article": "Article 12",
+      "requirement": "High-risk AI systems must have automatic logging capabilities to ensure traceability throughout their lifecycle.",
+      "status": "na",
+      "score": 0,
+      "rationale": "Article 12 record-keeping requirements apply to high-risk AI systems. The minimal-risk classification of this customer support chatbot exempts it from mandatory automatic logging and traceability requirements.",
+      "remediation": null,
+      "source_citation": "High-risk AI systems shall be designed and developed with the technical capability to automatically record events (logs) while the high-risk AI system is operating. Those logging capabilities shall ensure a level of traceability of the functioning of the AI system throughout its lifecycle that is appropriate to the intended purpose of the system."
+    },
+    {
+      "article": "Article 13",
+      "requirement": "High-risk AI systems must provide transparency through instructions for use and clear information to deployers.",
+      "status": "na",
+      "score": 0,
+      "rationale": "Article 13 transparency obligations are specific to high-risk AI systems requiring detailed instructions for use. As a minimal-risk system, the chatbot is not subject to these formal transparency requirements, though transparency measures are noted as implemented.",
+      "remediation": null,
+      "source_citation": "High-risk AI systems shall be accompanied by instructions for use in an appropriate digital format or otherwise that include concise, complete, correct and clear information that is relevant, accessible and comprehensible to deployers."
+    },
+    {
+      "article": "Article 14",
+      "requirement": "High-risk AI systems must implement appropriate human oversight measures to prevent or minimize risks.",
+      "status": "na",
+      "score": 0,
+      "rationale": "Article 14 human oversight requirements apply to high-risk AI systems. While the questionnaire indicates human oversight is present, the formal Article 14 requirements do not apply to this minimal-risk customer support chatbot.",
+      "remediation": null,
+      "source_citation": "a description of the human oversight measures implemented in accordance with Article 14"
+    },
+    {
+      "article": "Article 15",
+      "requirement": "High-risk AI systems must achieve appropriate levels of accuracy, robustness, and cybersecurity throughout their lifecycle.",
+      "status": "na",
+      "score": 0,
+      "rationale": "Article 15 requirements for accuracy, robustness, and cybersecurity apply to high-risk AI systems. The minimal-risk classification means these formal requirements do not apply, though accuracy testing is noted as conducted.",
+      "remediation": null,
+      "source_citation": "High-risk AI systems shall be designed and developed in such a way that they achieve an appropriate level of accuracy, robustness and cybersecurity, and perform consistently in those respects throughout their lifecycle."
+    },
+    {
+      "article": "Article 50",
+      "requirement": "General-purpose AI models and generative AI systems must meet specific transparency obligations.",
+      "status": "na",
+      "score": 0,
+      "rationale": "The questionnaire indicates this is not a general-purpose AI model (gpai_model: no). Article 50 transparency requirements for GPAI and generative AI systems do not apply to this customer support chatbot.",
+      "remediation": null,
+      "source_citation": "Article 50 addresses transparency obligations specific to general-purpose AI models, which is not applicable to this system as indicated by gpai_model: no."
+    },
+    {
+      "article": "Article 51",
+      "requirement": "General-purpose AI models with systemic risk must comply with additional obligations including risk assessment and mitigation.",
+      "status": "na",
+      "score": 0,
+      "rationale": "The system is not a general-purpose AI model and does not present systemic risk (systemic_risk: no). Article 51 requirements for GPAI models with systemic risk are not applicable.",
+      "remediation": null,
+      "source_citation": "Article 51 requirements apply to general-purpose AI models with systemic risk, which is not applicable as the system is neither a GPAI model nor presents systemic risk."
+    }
+  ],
+  "generated_at": "2026-06-02T08:19:10.351577Z",
+  "processing_time_seconds": 24.47
+}

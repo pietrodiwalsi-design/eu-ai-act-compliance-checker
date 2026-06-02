@@ -1,0 +1,131 @@
+{
+  "id": "502da19a-e836-4dca-92c3-867d4c87ad4e",
+  "created_at": "2026-06-02T08:28:53.106759Z",
+  "answers": {
+    "system_description": "CV screening for job applications",
+    "sector": "employment",
+    "uses_biometrics": "no",
+    "social_scoring": "no",
+    "makes_automated_decisions": "yes",
+    "affects_fundamental_rights": "yes",
+    "has_human_oversight": "yes",
+    "data_governance": "yes",
+    "technical_documentation": "partial",
+    "transparency_measures": "yes",
+    "accuracy_testing": "partial",
+    "intended_use": "HR screening",
+    "deployment_region": "EU",
+    "gpai_model": "no",
+    "systemic_risk": "no"
+  },
+  "report": {
+    "id": "ebcfdf40-c011-4a10-963d-9ee839418a88",
+    "assessment_id": "502da19a-e836-4dca-92c3-867d4c87ad4e",
+    "risk_tier": "minimal_risk",
+    "overall_score": 61,
+    "checks": [
+      {
+        "article": "Article 5",
+        "requirement": "Prohibition of AI systems that manipulate behavior or exploit vulnerabilities in employment contexts",
+        "status": "pass",
+        "score": 100,
+        "rationale": "The CV screening system does not involve social scoring, biometric categorization, or manipulative practices. It operates within the employment sector for recruitment purposes without prohibited characteristics.",
+        "remediation": null,
+        "source_citation": "AI systems intended to be used for the recruitment or selection of natural persons, in particular to place targeted job advertisements, to analyse and filter applications, and to evaluate candidates"
+      },
+      {
+        "article": "Article 10",
+        "requirement": "Training, validation and testing data sets must be relevant, representative, free of errors and complete with appropriate statistical properties",
+        "status": "warning",
+        "score": 60,
+        "rationale": "Data governance is indicated as 'yes', but the system is classified as high-risk employment AI. The questionnaire does not provide sufficient detail on whether data sets meet quality criteria, are free of bias, or are representative of the target population.",
+        "remediation": "Provide comprehensive documentation demonstrating that training, validation and testing data sets are relevant, representative, free of errors, complete, and designed to minimize bias that could lead to discrimination. Include statistical properties and information about data collection and labeling processes.",
+        "source_citation": "Training, validation and testing data sets shall be relevant, representative, free of errors and complete. They shall have the appropriate statistical properties, including as regards the persons or groups of persons on which the high-risk AI system is intended to be used."
+      },
+      {
+        "article": "Article 10",
+        "requirement": "Data sets must be designed to minimize bias and ensure non-discrimination under Union law",
+        "status": "warning",
+        "score": 55,
+        "rationale": "While data governance is confirmed, there is no explicit evidence that data sets have been specifically designed to minimize bias in CV screening, which is critical for employment decisions affecting fundamental rights.",
+        "remediation": "Implement and document specific measures to ensure training data minimizes bias that could lead to discrimination. Conduct bias audits and ensure data sets are sufficiently representative of the population for which the system is intended.",
+        "source_citation": "Training, validation and testing data sets shall be designed and selected with a view to minimising the introduction of bias that could lead to discrimination prohibited under Union law and to ensuring that the data sets are sufficiently representative of the population or the target group for which the high-risk AI system is intended to be used."
+      },
+      {
+        "article": "Article 11",
+        "requirement": "Technical documentation must include system description, architecture, data sets, risk management, and performance metrics",
+        "status": "fail",
+        "score": 40,
+        "rationale": "Technical documentation is marked as 'partial', which is insufficient for a high-risk employment AI system. Complete technical documentation including system architecture, algorithms, data flows, risk management system, and performance metrics is mandatory.",
+        "remediation": "Complete comprehensive technical documentation including: general system description with provider details, detailed architecture and algorithms, complete data set descriptions with sources and governance, risk management system description, human oversight measures, and accuracy/robustness/cybersecurity measures with performance metrics.",
+        "source_citation": "The technical documentation shall contain, at a minimum, the following information, as applicable to the high-risk AI system concerned: (a) a general description of the AI system including its intended purpose, the name and contact details of the provider and, where applicable, its authorised representative; (b) a detailed description of the system architecture, including the algorithms, data flows, and processing operations; (c) a description of the data sets used for training, validation and testing, including information on data sources, data collection processes, and data governance practices"
+      },
+      {
+        "article": "Article 11",
+        "requirement": "Technical documentation must include risk management system description and conformity assessment information",
+        "status": "fail",
+        "score": 35,
+        "rationale": "The partial technical documentation status indicates missing critical components. For high-risk employment AI, complete documentation of the risk management system and conformity assessment procedures is legally required.",
+        "remediation": "Document the complete risk management system implemented in accordance with Article 9, including risk identification, mitigation measures, and monitoring procedures. Include information on conformity assessment procedures and any notified body involvement.",
+        "source_citation": "(f) a description of the risk management system implemented in accordance with Article 9; (g) information on the performance of the AI system, including metrics for accuracy, robustness, and any limitations or known biases; (h) information on the conformity assessment procedure followed and the notified body involved, where applicable."
+      },
+      {
+        "article": "Article 13",
+        "requirement": "High-risk AI systems must be accompanied by instructions for use with complete information for deployers",
+        "status": "warning",
+        "score": 65,
+        "rationale": "Transparency measures are indicated as 'yes', but for high-risk employment systems, detailed instructions for use must include provider identity, system capabilities and limitations, accuracy levels, known circumstances affecting performance, and human oversight measures.",
+        "remediation": "Ensure instructions for use are complete, including: provider contact details, intended purpose, accuracy and robustness levels tested and validated, known limitations, foreseeable circumstances affecting performance, human oversight technical measures, and maintenance requirements.",
+        "source_citation": "High-risk AI systems shall be accompanied by instructions for use in an appropriate digital format or otherwise that include concise, complete, correct and clear information that is relevant, accessible and comprehensible to deployers. The instructions for use shall contain at least the following information: (a) the identity and the contact details of the provider and, where applicable, of its authorised representative; (b) the characteristics, capabilities and limitations of performance of the high-risk AI system"
+      },
+      {
+        "article": "Article 13",
+        "requirement": "Instructions must include accuracy, robustness levels and circumstances that may impact performance",
+        "status": "warning",
+        "score": 60,
+        "rationale": "Given that accuracy testing is only 'partial', the instructions for use likely lack complete information on validated accuracy levels and known circumstances that may impact the CV screening system's performance in employment decisions.",
+        "remediation": "Complete accuracy and robustness testing, then document in instructions: the level of accuracy and robustness against which the system has been tested and validated, expected performance levels, and any known or foreseeable circumstances that may impact accuracy or robustness.",
+        "source_citation": "(ii) the level of accuracy, robustness and cybersecurity against which the high-risk AI system has been tested and validated and which can be expected, and any known or foreseeable circumstances that may have an impact on that expected level of accuracy, robustness and cybersecurity"
+      },
+      {
+        "article": "Article 14",
+        "requirement": "Human oversight measures must be implemented to prevent or minimize risks to health, safety or fundamental rights",
+        "status": "pass",
+        "score": 85,
+        "rationale": "Human oversight is confirmed as 'yes', which is appropriate for this high-risk employment system that makes automated decisions affecting fundamental rights. However, the effectiveness of these measures should be documented in technical documentation.",
+        "remediation": "Ensure human oversight measures are fully documented in technical documentation, including technical measures to facilitate interpretation of system outputs by deployers.",
+        "source_citation": "(d) the human oversight measures referred to in Article 14, including the technical measures put in place to facilitate the interpretation of the outputs of the high-risk AI system by the deployers"
+      },
+      {
+        "article": "Article 15",
+        "requirement": "High-risk AI systems must achieve appropriate levels of accuracy, robustness and cybersecurity",
+        "status": "fail",
+        "score": 45,
+        "rationale": "Accuracy testing is marked as 'partial', which is non-compliant for a high-risk employment AI system. Complete accuracy, robustness and cybersecurity testing and validation is mandatory before deployment.",
+        "remediation": "Complete comprehensive accuracy and robustness testing with documented metrics. Implement and validate cybersecurity measures. Document all testing methodologies, results, known limitations, and any biases identified. Ensure testing covers the specific employment context and candidate populations.",
+        "source_citation": "(e) a description of the accuracy, robustness and cybersecurity measures implemented in accordance with Article 15"
+      },
+      {
+        "article": "Article 50",
+        "requirement": "Transparency obligations for general-purpose AI models",
+        "status": "na",
+        "score": 0,
+        "rationale": "The system does not use a general-purpose AI model as indicated by 'gpai_model: no', therefore Article 50 transparency requirements for GPAI do not apply.",
+        "remediation": null,
+        "source_citation": "N/A - Article 50 applies to general-purpose AI models"
+      },
+      {
+        "article": "Article 51",
+        "requirement": "Additional obligations for general-purpose AI models with systemic risk",
+        "status": "na",
+        "score": 0,
+        "rationale": "The system does not involve systemic risk GPAI models as indicated by 'systemic_risk: no' and 'gpai_model: no', therefore Article 51 does not apply.",
+        "remediation": null,
+        "source_citation": "N/A - Article 51 applies to GPAI models with systemic risk"
+      }
+    ],
+    "generated_at": "2026-06-02T08:28:53.106492Z",
+    "processing_time_seconds": 39.39
+  },
+  "status": "complete"
+}
