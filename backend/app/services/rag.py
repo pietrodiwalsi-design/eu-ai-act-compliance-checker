@@ -57,12 +57,21 @@ class RAGPipeline:
     # ── Vector store ──────────────────────────────────────────────────────────
 
     def _get_embeddings(self):
-        # Use OpenAI embeddings (best quality); fallback to local if no key
-        if settings.OPENAI_API_KEY:
-            return OpenAIEmbeddings(api_key=settings.OPENAI_API_KEY)
-        # Free fallback: sentence-transformers via langchain_community
-        from langchain_community.embeddings import SentenceTransformerEmbeddings
-        return SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+        # Lightweight LangChain-compatible wrapper around ChromaDB's built-in
+        # onnxruntime embeddings — no PyTorch / CUDA required
+        from chromadb.utils.embedding_functions import DefaultEmbeddingFunction
+        from langchain_core.embeddings import Embeddings
+
+        chroma_fn = DefaultEmbeddingFunction()
+
+        class _ChromaEmbeddingsAdapter(Embeddings):
+            def embed_documents(self, texts: list) -> list:
+                return chroma_fn(texts)
+
+            def embed_query(self, text: str) -> list:
+                return chroma_fn([text])[0]
+
+        return _ChromaEmbeddingsAdapter()
 
     def load_knowledge_base(self) -> None:
         """Load EU AI Act text chunks into Chroma. Call once on app startup."""
