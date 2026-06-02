@@ -20,6 +20,7 @@ export interface ComplianceReport {
   checks: ComplianceCheck[];
   generated_at: string;    // ISO datetime
   processing_time_seconds: number;
+  answers?: WizardAnswers;
 }
 
 export type WizardAnswers = Record<string, string | string[] | boolean>;
@@ -30,6 +31,14 @@ export interface Assessment {
   answers: WizardAnswers;
   report?: ComplianceReport;
   status: 'pending' | 'processing' | 'complete' | 'error';
+}
+
+export interface WhatIfResponse {
+  original_tier: RiskTier;
+  new_tier: RiskTier;
+  changed: boolean;
+  analysis: string;
+  key_obligations: string[];
 }
 
 export interface WizardQuestion {
