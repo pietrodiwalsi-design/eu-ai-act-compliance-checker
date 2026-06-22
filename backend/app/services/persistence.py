@@ -15,6 +15,10 @@ from app.models.assessment import AssessmentResponse, ComplianceReport
 ASSESSMENTS_DIR = Path(__file__).parent.parent.parent / "data" / "assessments"
 ASSESSMENTS_DIR.mkdir(parents=True, exist_ok=True)
 
+# In-memory cache — survives within a running process (covers same-request-cycle lookups)
+_reports_cache: dict = {}
+_assessments_cache: dict = {}
+
 
 def _report_path(report_id: str) -> Path:
     return ASSESSMENTS_DIR / f"{report_id}.json"
@@ -25,25 +29,38 @@ def _assessment_path(assessment_id: str) -> Path:
 
 
 def save_report(report: ComplianceReport) -> None:
-    """Write a ComplianceReport to data/assessments/{id}.json"""
-    path = _report_path(report.id)
-    # Pydantic v2: model_dump_json
-    path.write_text(report.model_dump_json(indent=2), encoding="utf-8")
+    """Write a ComplianceReport to data/assessments/{id}.json and cache in memory."""
+    _reports_cache[report.id] = report
+    try:
+        path = _report_path(report.id)
+        path.write_text(report.model_dump_json(indent=2), encoding="utf-8")
+    except Exception as exc:
+        import logging
+        logging.getLogger(__name__).warning("Failed to write report to disk: %s", exc)
 
 
 def load_report(report_id: str) -> Optional[ComplianceReport]:
-    """Load a ComplianceReport by ID. Returns None if not found."""
+    """Load a ComplianceReport by ID — checks memory cache first, then disk."""
+    if report_id in _reports_cache:
+        return _reports_cache[report_id]
     path = _report_path(report_id)
     if not path.exists():
         return None
     data = json.loads(path.read_text(encoding="utf-8"))
-    return ComplianceReport(**data)
+    report = ComplianceReport(**data)
+    _reports_cache[report_id] = report  # warm cache
+    return report
 
 
 def save_assessment(assessment: AssessmentResponse) -> None:
-    """Write an AssessmentResponse to data/assessments/assessment_{id}.json"""
-    path = _assessment_path(assessment.id)
-    path.write_text(assessment.model_dump_json(indent=2), encoding="utf-8")
+    """Write an AssessmentResponse to data/assessments/assessment_{id}.json and cache."""
+    _assessments_cache[assessment.id] = assessment
+    try:
+        path = _assessment_path(assessment.id)
+        path.write_text(assessment.model_dump_json(indent=2), encoding="utf-8")
+    except Exception as exc:
+        import logging
+        logging.getLogger(__name__).warning("Failed to write assessment to disk: %s", exc)
 
 
 def load_assessment(assessment_id: str) -> Optional[AssessmentResponse]:
