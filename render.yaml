@@ -30,6 +30,10 @@ services:
         value: "false"
       - key: JWT_SECRET_KEY
         generateValue: true  # Render auto-generates a secure random value
+      - key: API_KEY
+        sync: false          # set manually in Render dashboard — your secret API key
+      - key: FRONTEND_URL
+        sync: false          # set to https://eu-ai-frontend.onrender.com after frontend deploys
 
   # ── Frontend: Next.js ────────────────────────────────────────────────────────
   - type: web

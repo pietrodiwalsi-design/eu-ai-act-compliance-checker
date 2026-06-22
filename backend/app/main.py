@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,6 +7,22 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.router import router
 from app.core.config import settings
 from app.services.rag import rag_pipeline
+
+logger = logging.getLogger(__name__)
+
+
+def get_allowed_origins() -> list[str]:
+    """Build allowed origins list. Use FRONTEND_URL if set, else ["*"] only in DEBUG."""
+    if settings.FRONTEND_URL:
+        return [settings.FRONTEND_URL]
+    if settings.DEBUG:
+        return ["*"]
+    if settings.ALLOWED_ORIGINS == ["*"]:
+        logger.warning(
+            "ALLOWED_ORIGINS is still ['*'] in production! "
+            "Set FRONTEND_URL or ALLOWED_ORIGINS explicitly."
+        )
+    return settings.ALLOWED_ORIGINS
 
 
 @asynccontextmanager
@@ -21,11 +38,14 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS — allow Next.js dev server and production origin
+# CORS — production-safe configuration
+allowed_origins = get_allowed_origins()
+allow_credentials = "*" not in allowed_origins
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
-    allow_credentials=True,
+    allow_origins=allowed_origins,
+    allow_credentials=allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )

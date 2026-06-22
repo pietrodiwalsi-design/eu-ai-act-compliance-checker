@@ -11,7 +11,8 @@ import uuid
 from datetime import datetime, timezone
 from typing import List
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from app.api.deps import TokenData, get_current_user
 
 from app.models.assessment import (
     AssessmentRequest,
@@ -36,7 +37,7 @@ router = APIRouter()
 
 
 @router.post("/assess", response_model=ComplianceReport, status_code=201)
-async def run_assessment(request: AssessmentRequest) -> ComplianceReport:
+async def run_assessment(request: AssessmentRequest, _: TokenData = Depends(get_current_user)) -> ComplianceReport:
     """
     Run a full EU AI Act compliance assessment.
 
@@ -106,13 +107,13 @@ async def run_assessment(request: AssessmentRequest) -> ComplianceReport:
 
 
 @router.get("/assessments", response_model=List[AssessmentResponse])
-async def list_assessments() -> List[AssessmentResponse]:
+async def list_assessments(_: TokenData = Depends(get_current_user)) -> List[AssessmentResponse]:
     """Return all assessments (newest first)."""
     return persistence_list_assessments()
 
 
 @router.get("/reports/{report_id}", response_model=ComplianceReport)
-async def get_report(report_id: str) -> ComplianceReport:
+async def get_report(report_id: str, _: TokenData = Depends(get_current_user)) -> ComplianceReport:
     """Fetch a specific compliance report by ID."""
     report = load_report(report_id)
     if not report:
@@ -121,7 +122,7 @@ async def get_report(report_id: str) -> ComplianceReport:
 
 
 @router.post("/whatif", response_model=WhatIfResponse)
-async def what_if_analysis(request: WhatIfRequest) -> WhatIfResponse:
+async def what_if_analysis(request: WhatIfRequest, _: TokenData = Depends(get_current_user)) -> WhatIfResponse:
     """
     Re-evaluate risk tier and obligations for a different deployment context.
     Uses the WHAT_IF_PROMPT to call the LLM.

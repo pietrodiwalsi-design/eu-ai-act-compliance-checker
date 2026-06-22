@@ -1,0 +1,11 @@
+Top 5 findings from the EU AI Act Compliance Checker review:
+
+1. No authentication middleware despite JWT_SECRET_KEY existing in config — every /assess call is completely unauthenticated. (backend/app/api/v1/assess.py)
+
+2. rag.py:140 does bare json.loads(raw) with zero error handling or Pydantic validation. Any LLM deviation crashes the entire assessment with 500.
+
+3. Chroma is using the weak DefaultEmbeddingFunction and render.yaml puts the DB on ephemeral free-tier disk that gets wiped on deploy.
+
+4. CORS is set to ["*"] + allow_credentials=True in main.py:22-27 — this is invalid and leaves the API wide open.
+
+5. render.yaml and docker-compose.yml both reference non-existent Dockerfiles (Dockerfile.local) and will fail on first deploy. No knowledge base seeding mechanism either.

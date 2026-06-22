@@ -30,6 +30,12 @@ class Settings(BaseSettings):
     # CORS — set to ["*"] in Render; tighten once frontend URL is known
     ALLOWED_ORIGINS: list[str] = ["*"]
 
+    # Auth
+    API_KEY: str = ""  # Required for /auth/token endpoint
+
+    # Frontend
+    FRONTEND_URL: str = ""  # Production frontend URL for CORS
+
     # Performance
     MAX_REPORT_TIMEOUT_SECONDS: int = 180  # 3 min SLA
 
