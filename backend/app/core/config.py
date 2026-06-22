@@ -9,11 +9,13 @@ class Settings(BaseSettings):
     APP_VERSION: str = "0.1.0"
     DEBUG:       bool = False
 
-    # LLM
+    # LLM — priority: Groq (free/OSS) → Anthropic → OpenAI
+    GROQ_API_KEY:      str = ""                        # free at console.groq.com
+    GROQ_LLM_MODEL:    str = "llama-3.3-70b-versatile" # best free Groq model
     ANTHROPIC_API_KEY: str = ""
     OPENAI_API_KEY:    str = ""
-    LLM_MODEL:         str = "claude-sonnet-4-5"   # primary
-    LLM_FALLBACK:      str = "gpt-4o"              # fallback
+    LLM_MODEL:         str = "claude-sonnet-4-5"        # Anthropic fallback
+    LLM_FALLBACK:      str = "gpt-4o"                  # OpenAI last resort
 
     # Vector store (Chroma)
     CHROMA_PERSIST_DIR:     str = "./data/chroma_db"

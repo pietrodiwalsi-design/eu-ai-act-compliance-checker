@@ -8,8 +8,12 @@ services:
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     plan: free
     envVars:
+      - key: GROQ_API_KEY
+        sync: false          # set manually in Render dashboard — free at console.groq.com
+      - key: GROQ_LLM_MODEL
+        value: llama-3.3-70b-versatile
       - key: ANTHROPIC_API_KEY
-        sync: false          # set manually in Render dashboard (secret)
+        sync: false          # optional fallback — set in Render dashboard if needed
       - key: LLM_MODEL
         value: claude-sonnet-4-5
       - key: OPENAI_API_KEY

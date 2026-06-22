@@ -1,5 +1,10 @@
 """
-RAG pipeline: Chroma vector store + LangChain + Claude/GPT-4o.
+RAG pipeline: Chroma vector store + LangChain + Groq/Claude/GPT-4o.
+
+LLM priority order:
+  1. Groq  (GROQ_API_KEY)    → Llama 3.3 70B  — free, fast, open-source
+  2. Claude (ANTHROPIC_API_KEY) → Claude Sonnet   — fallback
+  3. OpenAI (OPENAI_API_KEY)   → GPT-4o          — last resort
 
 Workflow:
   1. On startup, load EU AI Act text chunks from data/knowledge_base/
@@ -17,6 +22,7 @@ from langchain_anthropic import ChatAnthropic
 from langchain_chroma import Chroma
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_core.documents import Document
+from langchain_groq import ChatGroq
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
@@ -37,6 +43,16 @@ class RAGPipeline:
     # ── LLM factory ───────────────────────────────────────────────────────────
 
     def _build_llm(self) -> Any:
+        # 1️⃣  Groq — free, open-source Llama 3.3 70B (preferred)
+        if settings.GROQ_API_KEY:
+            logger.info("Using Groq: %s", settings.GROQ_LLM_MODEL)
+            return ChatGroq(
+                model=settings.GROQ_LLM_MODEL,
+                api_key=settings.GROQ_API_KEY,
+                temperature=0,
+                max_tokens=4096,
+            )
+        # 2️⃣  Anthropic Claude — fallback
         if settings.ANTHROPIC_API_KEY:
             logger.info("Using Anthropic Claude: %s", settings.LLM_MODEL)
             return ChatAnthropic(
@@ -45,6 +61,7 @@ class RAGPipeline:
                 max_tokens=4096,
                 temperature=0,
             )
+        # 3️⃣  OpenAI — last resort
         if settings.OPENAI_API_KEY:
             logger.info("Using OpenAI fallback: %s", settings.LLM_FALLBACK)
             return ChatOpenAI(
@@ -52,7 +69,10 @@ class RAGPipeline:
                 api_key=settings.OPENAI_API_KEY,
                 temperature=0,
             )
-        raise RuntimeError("No LLM API key configured — set ANTHROPIC_API_KEY or OPENAI_API_KEY in .env")
+        raise RuntimeError(
+            "No LLM API key configured — set GROQ_API_KEY (free), "
+            "ANTHROPIC_API_KEY, or OPENAI_API_KEY in .env"
+        )
 
     # ── Vector store ──────────────────────────────────────────────────────────
 
