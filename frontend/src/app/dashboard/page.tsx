@@ -12,17 +12,28 @@ const TIER_LABELS: Record<string, string> = {
   minimal_risk: '🟢 Minimal Risk',
 };
 
+interface LocalReport {
+  id: string;
+  risk_tier: string;
+  overall_score: number;
+  generated_at: string;
+  system_description: string;
+}
+
 export default function DashboardPage() {
-  const [assessments, setAssessments] = useState<Assessment[]>([]);
+  const [assessments, setAssessments] = useState<LocalReport[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
-    fetch(`${apiUrl}/api/v1/assessments`)
-      .then((r) => r.json())
-      .then(setAssessments)
-      .catch(() => setAssessments([]))
-      .finally(() => setLoading(false));
+    // Read from localStorage — persists across sessions on same device
+    try {
+      const index = JSON.parse(localStorage.getItem('reports_index') || '[]');
+      setAssessments(index);
+    } catch (_) {
+      setAssessments([]);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   return (
@@ -64,30 +75,22 @@ export default function DashboardPage() {
             {assessments.map((a) => (
               <Link
                 key={a.id}
-                href={a.report ? `/report/${a.report.id}` : '#'}
+                href={`/report/${a.id}`}
                 className="block bg-slate-800/60 border border-white/10 rounded-2xl p-5 hover:bg-slate-800 transition-colors"
               >
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm truncate">
-                      {(a.answers.system_description as string)?.slice(0, 80) || 'Assessment'}
-                      {(a.answers.system_description as string)?.length > 80 ? '…' : ''}
+                      {a.system_description?.slice(0, 80) || 'Assessment'}
+                      {a.system_description?.length > 80 ? '…' : ''}
                     </p>
-                    <p className="text-xs text-slate-400 mt-1">{new Date(a.created_at).toLocaleString()}</p>
+                    <p className="text-xs text-slate-400 mt-1">{new Date(a.generated_at).toLocaleString()}</p>
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">
-                    {a.report && (
-                      <>
-                        <span className="text-sm text-slate-300">{TIER_LABELS[a.report.risk_tier] ?? a.report.risk_tier}</span>
-                        <span className="font-semibold text-sm">{a.report.overall_score}/100</span>
-                      </>
-                    )}
-                    <span className={`text-xs px-2 py-0.5 rounded-full border ${
-                      a.status === 'complete' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300' :
-                      a.status === 'error'    ? 'bg-red-500/10 border-red-500/20 text-red-300' :
-                                               'bg-slate-500/10 border-slate-500/20 text-slate-400'
-                    }`}>
-                      {a.status}
+                    <span className="text-sm text-slate-300">{TIER_LABELS[a.risk_tier] ?? a.risk_tier}</span>
+                    <span className="font-semibold text-sm">{a.overall_score}/100</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full border bg-emerald-500/10 border-emerald-500/20 text-emerald-300">
+                      complete
                     </span>
                   </div>
                 </div>

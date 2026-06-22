@@ -30,8 +30,14 @@ export default function AssessPage() {
       }
 
       const report = await res.json();
-      // Cache report in sessionStorage so report page doesn't need a separate API call
-      try { sessionStorage.setItem(`report_${report.id}`, JSON.stringify(report)); } catch (_) {}
+      // Persist report in localStorage — survives browser restarts
+      try {
+        localStorage.setItem(`report_${report.id}`, JSON.stringify(report));
+        // Update reports index
+        const index = JSON.parse(localStorage.getItem('reports_index') || '[]');
+        index.unshift({ id: report.id, risk_tier: report.risk_tier, overall_score: report.overall_score, generated_at: report.generated_at, system_description: answers.system_description || '' });
+        localStorage.setItem('reports_index', JSON.stringify(index.slice(0, 50))); // keep last 50
+      } catch (_) {}
       router.push(`/report/${report.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');

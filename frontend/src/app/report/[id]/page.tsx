@@ -23,9 +23,9 @@ export default function ReportPage({ params }: ReportPageProps) {
   const [whatIfLoading, setWhatIfLoading] = useState(false);
 
   useEffect(() => {
-    // Check sessionStorage first (set by assess page — avoids extra API round-trip)
+    // Check localStorage first (persists across browser sessions)
     try {
-      const cached = sessionStorage.getItem(`report_${id}`);
+      const cached = localStorage.getItem(`report_${id}`);
       if (cached) {
         setReport(JSON.parse(cached));
         setLoading(false);
