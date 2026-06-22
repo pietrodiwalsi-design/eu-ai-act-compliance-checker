@@ -41,7 +41,7 @@ services:
     runtime: node
     rootDir: frontend
     buildCommand: npm install --include=dev && npm run build
-    startCommand: node .next/standalone/server.js
+    startCommand: npm start
     plan: free
     envVars:
       - key: NEXT_PUBLIC_API_URL
