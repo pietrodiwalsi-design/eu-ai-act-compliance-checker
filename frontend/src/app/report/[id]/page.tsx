@@ -1,16 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ComplianceReport, WhatIfResponse } from '@/types/assessment';
 import ScoreCard from '@/components/compliance/ScoreCard';
 import TrafficLight from '@/components/compliance/TrafficLight';
 
 interface ReportPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default function ReportPage({ params }: ReportPageProps) {
+  const { id } = use(params);
   const [report, setReport] = useState<ComplianceReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +24,7 @@ export default function ReportPage({ params }: ReportPageProps) {
 
   useEffect(() => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    fetch(`${apiUrl}/api/v1/reports/${params.id}`)
+    fetch(`${apiUrl}/api/v1/reports/${id}`)
       .then((r) => {
         if (!r.ok) throw new Error(`Report not found (${r.status})`);
         return r.json();
@@ -31,7 +32,7 @@ export default function ReportPage({ params }: ReportPageProps) {
       .then(setReport)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, [params.id]);
+  }, [id]);
 
   const handleExportPDF = () => {
     // Simple browser print with print-optimized styles
