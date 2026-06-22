@@ -30,6 +30,8 @@ export default function AssessPage() {
       }
 
       const report = await res.json();
+      // Cache report in sessionStorage so report page doesn't need a separate API call
+      try { sessionStorage.setItem(`report_${report.id}`, JSON.stringify(report)); } catch (_) {}
       router.push(`/report/${report.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');

@@ -23,6 +23,17 @@ export default function ReportPage({ params }: ReportPageProps) {
   const [whatIfLoading, setWhatIfLoading] = useState(false);
 
   useEffect(() => {
+    // Check sessionStorage first (set by assess page — avoids extra API round-trip)
+    try {
+      const cached = sessionStorage.getItem(`report_${id}`);
+      if (cached) {
+        setReport(JSON.parse(cached));
+        setLoading(false);
+        return;
+      }
+    } catch (_) {}
+
+    // Fallback: fetch from API
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
     fetch(`${apiUrl}/api/v1/reports/${id}`)
       .then((r) => {
