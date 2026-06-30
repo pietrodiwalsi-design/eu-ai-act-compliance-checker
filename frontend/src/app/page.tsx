@@ -12,6 +12,7 @@ export default function HomePage() {
         <nav className="flex gap-6 text-sm text-slate-300">
           <Link href="/dashboard" className="hover:text-white transition-colors">Dashboard</Link>
           <Link href="/assess" className="hover:text-white transition-colors">New Assessment</Link>
+          <Link href="/how-to-use" className="hover:text-white transition-colors">How to Use</Link>
         </nav>
       </header>
 
