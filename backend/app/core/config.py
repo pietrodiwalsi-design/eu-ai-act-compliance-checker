@@ -27,8 +27,8 @@ class Settings(BaseSettings):
     JWT_ALGORITHM:     str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24h
 
-    # CORS — set to ["*"] in Render; tighten once frontend URL is known
-    ALLOWED_ORIGINS: list[str] = ["*"]
+    # CORS — tightened for production
+    ALLOWED_ORIGINS: list[str] = []
 
     # Auth
     API_KEY: str = ""  # Required for /auth/token endpoint

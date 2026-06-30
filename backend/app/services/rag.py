@@ -31,6 +31,10 @@ from app.prompts.classification import COMPLIANCE_ANALYSIS_PROMPT
 logger = logging.getLogger(__name__)
 
 
+from pydantic import BaseModel
+class ComplianceCheckList(BaseModel):
+    checks: List[ComplianceCheck]
+
 class RAGPipeline:
     """
     Lightweight in-memory pipeline.
@@ -142,37 +146,21 @@ class RAGPipeline:
 
         retrieved_text = self.retrieve_relevant_articles(query)
 
-        chain = COMPLIANCE_ANALYSIS_PROMPT | self._llm
-        response = await chain.ainvoke({
-            "risk_tier": risk_tier.value,
-            "retrieved_articles": retrieved_text,
-            "answers": json.dumps(answers, indent=2),
-        })
-
-        raw = response.content if hasattr(response, "content") else str(response)
-
-        # Strip markdown code fences
-        raw = raw.strip()
-        if raw.startswith("```"):
-            raw = raw.split("```")[1]
-            if raw.startswith("json"):
-                raw = raw[4:]
-        raw = raw.strip()
-
-        # Robust JSON parsing with Pydantic validation
-        for attempt in range(3):
-            try:
-                checks_data: List[dict] = json.loads(raw)
-                return [ComplianceCheck(**item) for item in checks_data]
-            except (json.JSONDecodeError, Exception) as exc:
-                logger.error("JSON parse failure (attempt %d/%d): %s", attempt + 1, 3, exc)
-                logger.error("Raw LLM output (first 2000 chars): %s", raw[:2000])
-                if attempt == 2:
-                    raise ValueError(
-                        f"Failed to parse valid JSON after 3 attempts. Last error: {exc}"
-                    ) from exc
-
-        return []
+        structured_llm = self._llm.with_structured_output(ComplianceCheckList)
+        chain = COMPLIANCE_ANALYSIS_PROMPT | structured_llm
+        
+        try:
+            response = await chain.ainvoke({
+                "risk_tier": risk_tier.value,
+                "retrieved_articles": retrieved_text,
+                "answers": json.dumps(answers, indent=2),
+            })
+            if hasattr(response, 'checks'):
+                return response.checks
+            return []
+        except Exception as exc:
+            logger.error("Structured LLM output failed: %s", exc)
+            raise ValueError(f"Failed to generate structured compliance checks: {exc}") from exc
 
 
 # Singleton — instantiated once on app startup via lifespan
