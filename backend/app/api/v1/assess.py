@@ -22,6 +22,7 @@ from app.models.assessment import (
     WhatIfRequest,
     WhatIfResponse,
 )
+from app.core.rate_limiter import assess_rate_limiter
 from app.services.classifier import classify_risk_tier
 from app.services.deterministic_checks import run_deterministic_checks
 from app.services.persistence import list_assessments as persistence_list_assessments, load_report, save_assessment, save_report
@@ -37,7 +38,7 @@ router = APIRouter()
 
 
 @router.post("/assess", response_model=ComplianceReport, status_code=201)
-async def run_assessment(request: AssessmentRequest, _: TokenData = Depends(get_current_user)) -> ComplianceReport:
+async def run_assessment(request: AssessmentRequest, user: TokenData = Depends(get_current_user)) -> ComplianceReport:
     """
     Run a full EU AI Act compliance assessment.
 
@@ -48,6 +49,9 @@ async def run_assessment(request: AssessmentRequest, _: TokenData = Depends(get_
 
     Target: < 3 minutes (NFR-01)
     """
+    # Rate limit check (NFR-04)
+    assess_rate_limiter.check(user.api_key)
+
     start_time = time.monotonic()
     assessment_id = str(uuid.uuid4())
 
@@ -171,3 +175,18 @@ async def what_if_analysis(request: WhatIfRequest, _: TokenData = Depends(get_cu
         analysis=content,
         key_obligations=key_obligations[:3] or ["Review full analysis for obligations"],
     )
+
+
+@router.delete("/assessments/{assessment_id}", status_code=204)
+async def delete_single_assessment(assessment_id: str, _: TokenData = Depends(get_current_user)) -> None:
+    """Delete a single assessment and its associated report (GDPR)."""
+    from app.services.persistence import delete_assessment as persistence_delete_assessment
+    if not persistence_delete_assessment(assessment_id):
+        raise HTTPException(status_code=404, detail="Assessment not found")
+
+
+@router.delete("/assessments", status_code=204)
+async def clear_all_assessments(_: TokenData = Depends(get_current_user)) -> None:
+    """Clear all assessments and reports (GDPR full erasure)."""
+    from app.services.persistence import delete_all_user_data
+    delete_all_user_data()

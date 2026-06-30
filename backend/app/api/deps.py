@@ -58,3 +58,32 @@ async def get_current_user(
             detail="Invalid token",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+
+import time
+from fastapi import Request
+
+# Simple in-memory rate limiter (IP -> [timestamps])
+# In production, use Redis.
+RATE_LIMIT_STORE = {}
+RATE_LIMIT_MAX_REQUESTS = 5
+RATE_LIMIT_WINDOW_SECONDS = 60
+
+async def rate_limiter(request: Request):
+    client_ip = request.client.host if request.client else "unknown"
+    now = time.time()
+    
+    # Initialize or clean up old requests
+    if client_ip not in RATE_LIMIT_STORE:
+        RATE_LIMIT_STORE[client_ip] = []
+        
+    RATE_LIMIT_STORE[client_ip] = [t for t in RATE_LIMIT_STORE[client_ip] if now - t < RATE_LIMIT_WINDOW_SECONDS]
+    
+    if len(RATE_LIMIT_STORE[client_ip]) >= RATE_LIMIT_MAX_REQUESTS:
+        raise HTTPException(
+            status_code=429,
+            detail="Too Many Requests. Please try again later."
+        )
+        
+    RATE_LIMIT_STORE[client_ip].append(now)
+    return True

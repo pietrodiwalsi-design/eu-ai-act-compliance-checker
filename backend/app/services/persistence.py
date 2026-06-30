@@ -83,3 +83,50 @@ def list_assessments() -> List[AssessmentResponse]:
             # Skip corrupted files
             continue
     return assessments
+
+
+# ── GDPR data deletion (NFR-03) ─────────────────────────────────────────────
+
+
+def delete_assessment(assessment_id: str) -> bool:
+    """Delete a single assessment and its linked report. Returns True if found."""
+    found = False
+
+    # Load assessment to find linked report ID
+    assessment = load_assessment(assessment_id)
+    if assessment and assessment.report:
+        delete_report(assessment.report.id)
+
+    # Delete assessment file
+    path = _assessment_path(assessment_id)
+    if path.exists():
+        path.unlink()
+        found = True
+    _assessments_cache.pop(assessment_id, None)
+
+    return found
+
+
+def delete_report(report_id: str) -> bool:
+    """Delete a single report. Returns True if found."""
+    found = False
+    path = _report_path(report_id)
+    if path.exists():
+        path.unlink()
+        found = True
+    _reports_cache.pop(report_id, None)
+    return found
+
+
+def delete_all_user_data() -> int:
+    """Delete ALL assessments and reports (full GDPR erasure). Returns count deleted."""
+    count = 0
+    for path in ASSESSMENTS_DIR.glob("*.json"):
+        try:
+            path.unlink()
+            count += 1
+        except Exception:
+            continue
+    _reports_cache.clear()
+    _assessments_cache.clear()
+    return count
