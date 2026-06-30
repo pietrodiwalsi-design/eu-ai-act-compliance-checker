@@ -39,5 +39,9 @@ class Settings(BaseSettings):
     # Performance
     MAX_REPORT_TIMEOUT_SECONDS: int = 180  # 3 min SLA
 
+    # Rate limiting (NFR-04)
+    RATE_LIMIT_MAX_REQUESTS: int = 10   # max requests per window
+    RATE_LIMIT_WINDOW_SECONDS: int = 60 # sliding window size
+
 
 settings = Settings()

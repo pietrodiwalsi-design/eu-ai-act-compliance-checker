@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
-from app.api.v1 import assess
+from app.api.v1 import assess, gdpr
 from app.api.deps import create_access_token
 from app.core.config import settings
 
 router = APIRouter(prefix="/api/v1")
 router.include_router(assess.router, tags=["assessments"])
+router.include_router(gdpr.router, tags=["gdpr"])
 
 
 class TokenRequest(BaseModel):

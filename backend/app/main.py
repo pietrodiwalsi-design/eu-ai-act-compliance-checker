@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import router
 from app.core.config import settings
+from app.core.rate_limiter import assess_rate_limiter
 from app.services.rag import rag_pipeline
 
 logger = logging.getLogger(__name__)
@@ -27,7 +28,15 @@ def get_allowed_origins() -> list[str]:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Load the RAG knowledge base on startup."""
+    """Load the RAG knowledge base on startup; configure rate limiter."""
+    # Configure rate limiter from settings (NFR-04)
+    assess_rate_limiter.max_requests = settings.RATE_LIMIT_MAX_REQUESTS
+    assess_rate_limiter.window_seconds = settings.RATE_LIMIT_WINDOW_SECONDS
+    logger.info(
+        "Rate limiter: %d req / %ds window",
+        assess_rate_limiter.max_requests,
+        assess_rate_limiter.window_seconds,
+    )
     rag_pipeline.load_knowledge_base()
     yield
 
