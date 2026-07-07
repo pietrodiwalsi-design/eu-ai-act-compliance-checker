@@ -44,4 +44,3 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
-.github/workflows/ci.yml

@@ -17,13 +17,13 @@ from __future__ import annotations
 
 import json
 import logging
-from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 from langchain_anthropic import ChatAnthropic
 from langchain_groq import ChatGroq
 from langchain_openai import ChatOpenAI
 from langchain_xai import ChatXAI
+from pydantic import BaseModel, SecretStr
 
 from app.core.config import settings
 from app.models.assessment import ComplianceCheck, RiskTier
@@ -32,7 +32,6 @@ from app.prompts.classification import COMPLIANCE_ANALYSIS_PROMPT
 logger = logging.getLogger(__name__)
 
 
-from pydantic import BaseModel
 class ComplianceCheckList(BaseModel):
     checks: List[ComplianceCheck]
 
@@ -114,7 +113,7 @@ class RAGPipeline:
         logger.info("Using Groq: %s", settings.GROQ_LLM_MODEL)
         return ChatGroq(
             model=settings.GROQ_LLM_MODEL,
-            api_key=settings.GROQ_API_KEY,
+            api_key=SecretStr(settings.GROQ_API_KEY),
             temperature=0,
             max_tokens=4096,
         )
@@ -125,7 +124,7 @@ class RAGPipeline:
         logger.info("Using xAI: %s", settings.XAI_LLM_MODEL)
         return ChatXAI(
             model=settings.XAI_LLM_MODEL,
-            api_key=settings.XAI_API_KEY,
+            api_key=SecretStr(settings.XAI_API_KEY),
             temperature=0,
             max_tokens=4096,
         )
@@ -134,9 +133,15 @@ class RAGPipeline:
         if not settings.ANTHROPIC_API_KEY:
             return None
         logger.info("Using Anthropic Claude: %s", settings.LLM_MODEL)
-        return ChatAnthropic(
+        # mypy misreports `model`/`max_tokens` as unexpected kwargs here —
+        # ChatAnthropic's __init__ is a bare *args/**kwargs passthrough into
+        # its pydantic model, and both fields genuinely exist
+        # (confirmed via ChatAnthropic.model_fields at runtime). False
+        # positive, not a real bug — found + confirmed during 2026-07-07 CI
+        # activation.
+        return ChatAnthropic(  # type: ignore[call-arg]
             model=settings.LLM_MODEL,
-            api_key=settings.ANTHROPIC_API_KEY,
+            api_key=SecretStr(settings.ANTHROPIC_API_KEY),
             max_tokens=4096,
             temperature=0,
         )
@@ -147,7 +152,7 @@ class RAGPipeline:
         logger.info("Using OpenAI fallback: %s", settings.LLM_FALLBACK)
         return ChatOpenAI(
             model=settings.LLM_FALLBACK,
-            api_key=settings.OPENAI_API_KEY,
+            api_key=SecretStr(settings.OPENAI_API_KEY),
             temperature=0,
         )
 

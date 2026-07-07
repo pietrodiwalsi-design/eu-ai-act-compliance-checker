@@ -1,10 +1,11 @@
 """Authentication dependencies for JWT validation."""
 from __future__ import annotations
 
+import time
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from pydantic import BaseModel
@@ -60,12 +61,9 @@ async def get_current_user(
         )
 
 
-import time
-from fastapi import Request
-
 # Simple in-memory rate limiter (IP -> [timestamps])
 # In production, use Redis.
-RATE_LIMIT_STORE = {}
+RATE_LIMIT_STORE: dict = {}
 RATE_LIMIT_MAX_REQUESTS = 5
 RATE_LIMIT_WINDOW_SECONDS = 60
 
