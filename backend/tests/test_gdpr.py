@@ -91,6 +91,28 @@ def test_delete_nonexistent_returns_false():
     assert delete_report("nonexistent_id_xyz") is False
 
 
+def test_delete_assessment_accepts_report_id():
+    """
+    Regression test (2026-07-07): the frontend only ever knows/displays the
+    *report* ID (report/[id]/page.tsx, dashboard's localStorage cache) — it
+    has no way to look up the separate assessment ID. Confirmed via a live
+    end-to-end test that the delete button always 404'd before this fix,
+    because DELETE /api/v1/assessments/{id} previously only accepted the
+    assessment ID. delete_assessment() must also resolve a report ID to its
+    linked assessment and delete both.
+    """
+    report = _make_report(report_id="test_r3", assessment_id="test_a3")
+    save_report(report)
+    assessment = _make_assessment(assessment_id="test_a3", report=report)
+    save_assessment(assessment)
+
+    # Call with the REPORT id ("test_r3"), exactly like the frontend does —
+    # NOT the assessment id ("test_a3").
+    assert delete_assessment("test_r3") is True
+    assert load_assessment("test_a3") is None
+    assert load_report("test_r3") is None
+
+
 def test_delete_all_user_data():
     # Save a few items
     for i in range(3):

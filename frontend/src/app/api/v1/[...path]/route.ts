@@ -63,16 +63,26 @@ async function proxy(req: NextRequest, path: string): Promise<NextResponse> {
     if (freshToken) {
       headers['Authorization'] = `Bearer ${freshToken}`;
       const retry = await fetch(url, { ...init, headers });
-      return new NextResponse(await retry.text(), {
-        status: retry.status,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return buildResponse(retry);
     }
   }
 
-  const body = await res.text();
+  return buildResponse(res);
+}
+
+// 204/304 (and other no-body statuses) must not carry a Content-Type/body —
+// the Fetch spec forbids it, and Next.js's NextResponse constructor throws
+// "Invalid response status code 204" if you try. This bit the DELETE
+// endpoints specifically (backend returns 204 on successful deletion),
+// which is why the frontend never had a working delete flow to begin with
+// — found while adding the delete-assessment UI, 2026-07-07.
+async function buildResponse(upstream: Response): Promise<NextResponse> {
+  if (upstream.status === 204 || upstream.status === 304) {
+    return new NextResponse(null, { status: upstream.status });
+  }
+  const body = await upstream.text();
   return new NextResponse(body, {
-    status: res.status,
+    status: upstream.status,
     headers: { 'Content-Type': 'application/json' },
   });
 }
@@ -86,6 +96,14 @@ export async function GET(
 }
 
 export async function POST(
+  req: NextRequest,
+  { params }: { params: Promise<{ path: string[] }> },
+) {
+  const { path } = await params;
+  return proxy(req, path.join('/'));
+}
+
+export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ path: string[] }> },
 ) {

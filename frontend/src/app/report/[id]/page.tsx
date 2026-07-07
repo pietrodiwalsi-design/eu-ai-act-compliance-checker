@@ -2,6 +2,7 @@
 
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ComplianceReport, WhatIfResponse } from '@/types/assessment';
 import ScoreCard from '@/components/compliance/ScoreCard';
 import TrafficLight from '@/components/compliance/TrafficLight';
@@ -26,9 +27,11 @@ function readCachedReport(id: string): ComplianceReport | null {
 
 export default function ReportPage({ params }: ReportPageProps) {
   const { id } = use(params);
+  const router = useRouter();
   const [report, setReport] = useState<ComplianceReport | null>(() => readCachedReport(id));
   const [loading, setLoading] = useState(() => readCachedReport(id) === null);
   const [error, setError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   // What-If state
   const [showWhatIf, setShowWhatIf] = useState(false);
@@ -59,6 +62,36 @@ export default function ReportPage({ params }: ReportPageProps) {
     // Simple browser print with print-optimized styles
     // The @media print rules in globals.css handle hiding nav etc.
     window.print();
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm('Delete this assessment permanently? This cannot be undone.')) {
+      return;
+    }
+
+    setDeleting(true);
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      const res = await fetch(`${apiUrl}/api/v1/assessments/${id}`, { method: 'DELETE' });
+      if (!res.ok && res.status !== 404) {
+        throw new Error(`Delete failed (${res.status})`);
+      }
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Delete failed';
+      alert(message);
+      setDeleting(false);
+      return;
+    }
+
+    try {
+      localStorage.removeItem(`report_${id}`);
+      const index: { id: string }[] = JSON.parse(localStorage.getItem('reports_index') || '[]');
+      localStorage.setItem('reports_index', JSON.stringify(index.filter((a) => a.id !== id)));
+    } catch {
+      // best-effort cache cleanup
+    }
+
+    router.push('/dashboard');
   };
 
   const runWhatIf = async () => {
@@ -121,12 +154,21 @@ export default function ReportPage({ params }: ReportPageProps) {
               Generated {new Date(report.generated_at).toLocaleString()} · {report.processing_time_seconds.toFixed(1)}s
             </p>
           </div>
-          <button
-            onClick={handleExportPDF}
-            className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm hover:bg-white/10 transition-colors print:hidden"
-          >
-            Export PDF
-          </button>
+          <div className="flex items-center gap-2 print:hidden">
+            <button
+              onClick={handleExportPDF}
+              className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm hover:bg-white/10 transition-colors"
+            >
+              Export PDF
+            </button>
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              className="px-4 py-2 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm hover:bg-red-500/20 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              {deleting ? 'Deleting…' : 'Delete'}
+            </button>
+          </div>
         </div>
 
         {/* Summary row */}

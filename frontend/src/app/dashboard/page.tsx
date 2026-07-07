@@ -3,6 +3,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
+function writeAssessmentsToLocalStorage(assessments: LocalReport[]): void {
+  try {
+    localStorage.setItem('reports_index', JSON.stringify(assessments));
+  } catch {
+    // best-effort — localStorage may be unavailable (private browsing, quota, etc.)
+  }
+}
+
 const TIER_LABELS: Record<string, string> = {
   prohibited:   '🚫 Prohibited',
   high_risk:    '🔴 High Risk',
@@ -31,8 +39,44 @@ function readAssessmentsFromLocalStorage(): LocalReport[] {
 }
 
 export default function DashboardPage() {
-  const [assessments] = useState<LocalReport[]>(readAssessmentsFromLocalStorage);
+  const [assessments, setAssessments] = useState<LocalReport[]>(readAssessmentsFromLocalStorage);
   const [loading] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
+    e.preventDefault(); // don't navigate via the parent <Link>
+    e.stopPropagation();
+
+    if (!window.confirm('Delete this assessment permanently? This cannot be undone.')) {
+      return;
+    }
+
+    setDeletingId(id);
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      const res = await fetch(`${apiUrl}/api/v1/assessments/${id}`, { method: 'DELETE' });
+      if (!res.ok && res.status !== 404) {
+        // 404 = already gone server-side, still fine to remove locally
+        throw new Error(`Delete failed (${res.status})`);
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Delete failed';
+      alert(message);
+      setDeletingId(null);
+      return;
+    }
+
+    // Remove from local cache regardless (report_{id} + the index entry)
+    try {
+      localStorage.removeItem(`report_${id}`);
+    } catch {
+      // ignore
+    }
+    const next = assessments.filter((a) => a.id !== id);
+    setAssessments(next);
+    writeAssessmentsToLocalStorage(next);
+    setDeletingId(null);
+  };
 
   return (
     <main className="min-h-screen bg-slate-900 text-white">
@@ -90,6 +134,21 @@ export default function DashboardPage() {
                     <span className="text-xs px-2 py-0.5 rounded-full border bg-emerald-500/10 border-emerald-500/20 text-emerald-300">
                       complete
                     </span>
+                    <button
+                      onClick={(e) => handleDelete(e, a.id)}
+                      disabled={deletingId === a.id}
+                      title="Delete assessment"
+                      aria-label="Delete assessment"
+                      className="text-slate-500 hover:text-red-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors p-1.5 rounded-lg hover:bg-red-500/10"
+                    >
+                      {deletingId === a.id ? (
+                        <span className="block w-4 h-4 rounded-full border-2 border-current border-t-transparent animate-spin" />
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                          <path fillRule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </button>
                   </div>
                 </div>
               </Link>

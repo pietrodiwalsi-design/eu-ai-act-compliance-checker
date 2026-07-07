@@ -88,20 +88,47 @@ def list_assessments() -> List[AssessmentResponse]:
 
 
 def delete_assessment(assessment_id: str) -> bool:
-    """Delete a single assessment and its linked report. Returns True if found."""
+    """Delete a single assessment and its linked report. Returns True if found.
+
+    Accepts EITHER an assessment ID OR a report ID. The frontend only ever
+    knows/displays the *report* ID (see report/[id]/page.tsx and the
+    dashboard's localStorage cache) — it has no way to look up the separate
+    assessment ID that this function historically required, which meant the
+    delete endpoint always 404'd when called the way the UI actually calls
+    it. Found + confirmed via an end-to-end test while wiring up the
+    frontend delete button, 2026-07-07.
+    """
+    # First try treating the input as an assessment ID (original behaviour).
+    assessment = load_assessment(assessment_id)
+    resolved_assessment_id = assessment_id
+
+    if assessment is None:
+        # Fall back: treat the input as a report ID and find the assessment
+        # that links to it.
+        report = load_report(assessment_id)
+        if report is not None:
+            for candidate in list_assessments():
+                if candidate.report and candidate.report.id == assessment_id:
+                    assessment = candidate
+                    resolved_assessment_id = candidate.id
+                    break
+
     found = False
 
-    # Load assessment to find linked report ID
-    assessment = load_assessment(assessment_id)
     if assessment and assessment.report:
         delete_report(assessment.report.id)
 
-    # Delete assessment file
-    path = _assessment_path(assessment_id)
+    # Delete assessment file (using whichever ID we actually resolved to)
+    path = _assessment_path(resolved_assessment_id)
     if path.exists():
         path.unlink()
         found = True
-    _assessments_cache.pop(assessment_id, None)
+    _assessments_cache.pop(resolved_assessment_id, None)
+
+    # If we only ever found a bare report (no assessment record at all,
+    # e.g. legacy data), still delete the report file itself.
+    if not found and assessment is None:
+        found = delete_report(assessment_id)
 
     return found
 
