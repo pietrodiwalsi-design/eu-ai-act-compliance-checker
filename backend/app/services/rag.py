@@ -23,6 +23,7 @@ from typing import Any, Dict, List, Tuple
 from langchain_anthropic import ChatAnthropic
 from langchain_groq import ChatGroq
 from langchain_openai import ChatOpenAI
+from langchain_xai import ChatXAI
 
 from app.core.config import settings
 from app.models.assessment import ComplianceCheck, RiskTier
@@ -44,47 +45,117 @@ class RAGPipeline:
 
     def __init__(self) -> None:
         self._articles: List[Tuple[str, str]] = []   # (filename, content)
-        self._llm = self._build_llm()
+        # Lazy: NOT built here. `rag_pipeline = RAGPipeline()` below runs at
+        # module-IMPORT time (as soon as anything does `from app.services.rag
+        # import rag_pipeline`), which is earlier than the FastAPI lifespan
+        # hook that the module docstring/comments describe. Building the LLM
+        # client eagerly here meant importing this module at all — including
+        # from test collection, tooling, or any other module that merely
+        # needs e.g. `retrieve_relevant_articles` — crashed hard whenever no
+        # provider API key was configured. Found during 2026-07-07 QA review.
+        self.__llm: Any = None
+
+    @property
+    def _llm(self) -> Any:
+        """Build the LLM client on first actual use, not on import/construction."""
+        if self.__llm is None:
+            self.__llm = self._build_llm()
+        return self.__llm
 
     # ── LLM factory ───────────────────────────────────────────────────────────
 
     def _build_llm(self) -> Any:
-        # 1️⃣  Groq — free, open-source Llama 3.3 70B (preferred)
-        if settings.GROQ_API_KEY:
-            logger.info("Using Groq: %s", settings.GROQ_LLM_MODEL)
-            return ChatGroq(
-                model=settings.GROQ_LLM_MODEL,
-                api_key=settings.GROQ_API_KEY,
-                temperature=0,
-                max_tokens=4096,
-            )
-        # 2️⃣  Anthropic Claude — fallback
-        if settings.ANTHROPIC_API_KEY:
-            logger.info("Using Anthropic Claude: %s", settings.LLM_MODEL)
-            return ChatAnthropic(
-                model=settings.LLM_MODEL,
-                api_key=settings.ANTHROPIC_API_KEY,
-                max_tokens=4096,
-                temperature=0,
-            )
-        # 3️⃣  OpenAI — last resort
-        if settings.OPENAI_API_KEY:
-            logger.info("Using OpenAI fallback: %s", settings.LLM_FALLBACK)
-            return ChatOpenAI(
-                model=settings.LLM_FALLBACK,
-                api_key=settings.OPENAI_API_KEY,
-                temperature=0,
-            )
+        """
+        Provider factory. Explicit selection via LLM_PROVIDER env var
+        ("groq" | "xai" | "anthropic" | "openai") makes provider choice a
+        configuration decision, not a code change.
+
+        If LLM_PROVIDER is unset, falls back to legacy auto-detect order
+        (Groq -> Anthropic -> OpenAI) for backward compatibility with
+        existing deployments that never set the new var.
+        """
+        provider = (settings.LLM_PROVIDER or "").strip().lower()
+
+        builders = {
+            "groq": self._build_groq,
+            "xai": self._build_xai,
+            "anthropic": self._build_anthropic,
+            "openai": self._build_openai,
+        }
+
+        if provider:
+            if provider not in builders:
+                raise RuntimeError(
+                    f"Unknown LLM_PROVIDER '{provider}' — expected one of "
+                    f"{sorted(builders)}"
+                )
+            llm = builders[provider]()
+            if llm is None:
+                raise RuntimeError(
+                    f"LLM_PROVIDER='{provider}' selected but its API key is not "
+                    "configured (check env / /root/.secrets/eu-ai-act.env)."
+                )
+            return llm
+
+        # Legacy auto-detect (unchanged default behaviour)
+        for name in ("groq", "anthropic", "openai"):
+            llm = builders[name]()
+            if llm is not None:
+                return llm
+
         raise RuntimeError(
-            "No LLM API key configured — set GROQ_API_KEY (free), "
-            "ANTHROPIC_API_KEY, or OPENAI_API_KEY in .env"
+            "No LLM API key configured — set LLM_PROVIDER + the matching key "
+            "(GROQ_API_KEY, XAI_API_KEY, ANTHROPIC_API_KEY, or OPENAI_API_KEY)."
+        )
+
+    def _build_groq(self) -> Any:
+        if not settings.GROQ_API_KEY:
+            return None
+        logger.info("Using Groq: %s", settings.GROQ_LLM_MODEL)
+        return ChatGroq(
+            model=settings.GROQ_LLM_MODEL,
+            api_key=settings.GROQ_API_KEY,
+            temperature=0,
+            max_tokens=4096,
+        )
+
+    def _build_xai(self) -> Any:
+        if not settings.XAI_API_KEY:
+            return None
+        logger.info("Using xAI: %s", settings.XAI_LLM_MODEL)
+        return ChatXAI(
+            model=settings.XAI_LLM_MODEL,
+            api_key=settings.XAI_API_KEY,
+            temperature=0,
+            max_tokens=4096,
+        )
+
+    def _build_anthropic(self) -> Any:
+        if not settings.ANTHROPIC_API_KEY:
+            return None
+        logger.info("Using Anthropic Claude: %s", settings.LLM_MODEL)
+        return ChatAnthropic(
+            model=settings.LLM_MODEL,
+            api_key=settings.ANTHROPIC_API_KEY,
+            max_tokens=4096,
+            temperature=0,
+        )
+
+    def _build_openai(self) -> Any:
+        if not settings.OPENAI_API_KEY:
+            return None
+        logger.info("Using OpenAI fallback: %s", settings.LLM_FALLBACK)
+        return ChatOpenAI(
+            model=settings.LLM_FALLBACK,
+            api_key=settings.OPENAI_API_KEY,
+            temperature=0,
         )
 
     # ── Knowledge base loading ────────────────────────────────────────────────
 
     def load_knowledge_base(self) -> None:
         """Load all EU AI Act .txt files into memory. Called once on startup."""
-        kb_dir = Path(settings.KNOWLEDGE_BASE_DIR)
+        kb_dir = settings.knowledge_base_path
         if not kb_dir.exists():
             logger.warning("Knowledge base directory not found: %s", kb_dir)
             return

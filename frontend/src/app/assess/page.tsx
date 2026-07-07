@@ -37,7 +37,9 @@ export default function AssessPage() {
         const index = JSON.parse(localStorage.getItem('reports_index') || '[]');
         index.unshift({ id: report.id, risk_tier: report.risk_tier, overall_score: report.overall_score, generated_at: report.generated_at, system_description: answers.system_description || '' });
         localStorage.setItem('reports_index', JSON.stringify(index.slice(0, 50))); // keep last 50
-      } catch (_) {}
+      } catch {
+        // localStorage may be unavailable (private browsing, quota) — non-fatal, report still navigates.
+      }
       router.push(`/report/${report.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');

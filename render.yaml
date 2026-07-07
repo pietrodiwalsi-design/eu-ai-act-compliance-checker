@@ -8,8 +8,21 @@ services:
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     plan: free
     envVars:
+      - key: LLM_PROVIDER
+        value: xai            # explicit provider selection — Peter/Fable agreed 2026-07-06
+                              # to standardize on xAI (Grok) to avoid Groq's free-tier
+                              # daily token-per-day rate limit, hit repeatedly during
+                              # 2026-07-07 QA testing. Without this set, the app silently
+                              # falls back to the legacy auto-detect order
+                              # (Groq -> Anthropic -> OpenAI) and always picks Groq again,
+                              # since GROQ_API_KEY below is always configured.
+      - key: XAI_API_KEY
+        sync: false          # set manually in Render dashboard — console.x.ai
+      - key: XAI_LLM_MODEL
+        value: grok-4-fast
       - key: GROQ_API_KEY
-        sync: false          # set manually in Render dashboard — free at console.groq.com
+        sync: false          # kept configured as a manual-fallback option only — not used
+                              # while LLM_PROVIDER=xai above is set. Free at console.groq.com
       - key: GROQ_LLM_MODEL
         value: llama-3.3-70b-versatile
       - key: ANTHROPIC_API_KEY
@@ -48,6 +61,12 @@ services:
         value: ""            # empty = same-origin proxy via route handler
       - key: BACKEND_URL
         sync: false          # set to https://eu-ai-backend.onrender.com after backend deploys
+      - key: BACKEND_API_KEY
+        sync: false          # MUST match the backend's API_KEY value above — set manually in
+                              # Render dashboard. Without this, the proxy route
+                              # (src/app/api/v1/[...path]/route.ts) can never obtain a JWT
+                              # from /auth/token, and every proxied request goes out with no
+                              # Authorization header (found missing during 2026-07-07 QA review).
       - key: NODE_ENV
         value: production
       - key: PORT

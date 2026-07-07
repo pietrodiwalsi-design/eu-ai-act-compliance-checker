@@ -1,0 +1,321 @@
+{
+  "version": "1.0",
+  "legal_baseline": "EU AI Act (Reg. 2024/1689) as amended by Digital Omnibus on AI (political agreement 7 May 2026; EP 16 Jun 2026; Council 29 Jun 2026; OJ publication July 2026)",
+  "labeled_by": "Claude Fable 5 research + Peter van Walsem review (IT Risk)",
+  "labeled_date": "2026-07-06",
+  "disclaimer": "Expert-labeled test fixtures for regression testing. Not legal advice.",
+  "cases": [
+    {
+      "id": "P01-social-scoring",
+      "input": "A municipality wants to deploy an AI system that assigns trustworthiness scores to residents based on their behavior across unrelated contexts (payment history, social media conduct, neighborhood complaints) and uses these scores to prioritize access to housing and permits.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "prohibited",
+        "primary_articles": ["Art. 5(1)(c)"],
+        "applicable_from": "2025-02-02",
+        "must_flag": ["prohibited_practice", "human_review", "not_legal_advice"]
+      },
+      "rationale": "Social scoring by/for public authorities leading to detrimental treatment in unrelated contexts. In force since 2 Feb 2025."
+    },
+    {
+      "id": "P02-workplace-emotion",
+      "input": "An insurance company wants AI that analyzes call-center employees' voices and facial expressions via webcam to infer their emotional state for performance management.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "prohibited",
+        "primary_articles": ["Art. 5(1)(f)"],
+        "applicable_from": "2025-02-02",
+        "must_flag": ["prohibited_practice", "human_review", "not_legal_advice"]
+      },
+      "rationale": "Emotion inference in the workplace is prohibited; medical/safety exception does not apply to performance management."
+    },
+    {
+      "id": "P03-nudifier-new-omnibus",
+      "input": "A startup offers an app whose main feature is generating realistic nude images of a person from an uploaded clothed photo, without any consent verification.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "prohibited",
+        "primary_articles": ["Art. 5 (new NCII prohibition, Digital Omnibus 2026)"],
+        "applicable_from": "2026-12-02",
+        "must_flag": ["prohibited_practice", "effective_date_future", "human_review", "not_legal_advice"]
+      },
+      "rationale": "NEW Omnibus prohibition: AI generating non-consensual intimate imagery of identifiable persons; intended-purpose limb applies to this provider. Effective 2 Dec 2026 — checker must know post-Omnibus law. TEMPORAL DISCRIMINATOR."
+    },
+    {
+      "id": "P04-face-scraping",
+      "input": "A security vendor builds a facial recognition database by scraping publicly available photos from social media and CCTV footage at scale, untargeted.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "prohibited",
+        "primary_articles": ["Art. 5(1)(e)"],
+        "applicable_from": "2025-02-02",
+        "must_flag": ["prohibited_practice", "human_review", "not_legal_advice"]
+      },
+      "rationale": "Untargeted scraping of facial images to expand recognition databases is prohibited."
+    },
+    {
+      "id": "P05-child-manipulation",
+      "input": "A connected toy uses AI voice interaction designed to persuade children to perform risky physical challenges to unlock game content.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "prohibited",
+        "primary_articles": ["Art. 5(1)(b)"],
+        "applicable_from": "2025-02-02",
+        "must_flag": ["prohibited_practice", "human_review", "not_legal_advice"]
+      },
+      "rationale": "Exploitation of age-related vulnerability causing (risk of) significant harm."
+    },
+    {
+      "id": "H01-cv-screening",
+      "input": "An HR-tech SaaS ranks and filters job applicants' CVs and video interviews, producing a shortlist recruiters rely on.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "high",
+        "primary_articles": ["Art. 6(2)", "Annex III 4(a)"],
+        "applicable_from": "2027-12-02",
+        "must_flag": ["human_review", "not_legal_advice"]
+      },
+      "rationale": "Recruitment/selection = Annex III 4(a). Obligations deferred by Omnibus from 2 Aug 2026 to 2 Dec 2027. TEMPORAL DISCRIMINATOR: pre-Omnibus checkers will cite 2026."
+    },
+    {
+      "id": "H02-credit-scoring",
+      "input": "A fintech provides banks an AI creditworthiness score deciding whether consumers get loans.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "high",
+        "primary_articles": ["Art. 6(2)", "Annex III 5(b)"],
+        "applicable_from": "2027-12-02",
+        "must_flag": ["human_review", "not_legal_advice"]
+      },
+      "rationale": "Creditworthiness evaluation of natural persons = Annex III 5(b)."
+    },
+    {
+      "id": "H03-life-health-insurance-pricing",
+      "input": "An insurer deploys AI for risk assessment and premium pricing of individual life and health insurance policies.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "high",
+        "primary_articles": ["Art. 6(2)", "Annex III 5(c)"],
+        "applicable_from": "2027-12-02",
+        "must_flag": ["human_review", "not_legal_advice"]
+      },
+      "rationale": "Risk assessment and pricing for LIFE and HEALTH insurance = Annex III 5(c). Core sector case."
+    },
+    {
+      "id": "H04-exam-scoring",
+      "input": "A university uses AI to automatically grade admission exams, determining who is admitted.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "high",
+        "primary_articles": ["Art. 6(2)", "Annex III 3(b)"],
+        "applicable_from": "2027-12-02",
+        "must_flag": ["human_review", "not_legal_advice"]
+      },
+      "rationale": "Evaluation of learning outcomes steering access to education = Annex III 3."
+    },
+    {
+      "id": "H05-grid-control",
+      "input": "A utility uses AI as a safety component controlling load balancing of the regional electricity grid in real time.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "high",
+        "primary_articles": ["Art. 6(2)", "Annex III 2"],
+        "applicable_from": "2027-12-02",
+        "must_flag": ["human_review", "not_legal_advice"]
+      },
+      "rationale": "Safety component in management/operation of critical infrastructure."
+    },
+    {
+      "id": "H06-police-risk-assessment",
+      "input": "A police force uses an AI tool assessing the reliability of evidence and likelihood of re-offending to support prosecution decisions.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "high",
+        "primary_articles": ["Art. 6(2)", "Annex III 6"],
+        "applicable_from": "2027-12-02",
+        "must_flag": ["human_review", "not_legal_advice"]
+      },
+      "rationale": "Law-enforcement use cases under Annex III 6."
+    },
+    {
+      "id": "H07-post-rbi",
+      "input": "Police run retrospective facial recognition on stored CCTV footage to identify suspects days after an incident.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "high",
+        "primary_articles": ["Art. 6(2)", "Annex III 1(a)"],
+        "applicable_from": "2027-12-02",
+        "must_flag": ["human_review", "not_legal_advice"]
+      },
+      "rationale": "POST (non-real-time) remote biometric identification = high-risk, NOT prohibited. Discriminator vs. real-time-in-public prohibition Art. 5(1)(h)."
+    },
+    {
+      "id": "N01-art63-narrow-task",
+      "input": "An HR department uses AI only to deduplicate incoming applications and convert CVs into a standard format; it makes no assessment of candidates.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "not_high_risk_art_6_3",
+        "primary_articles": ["Art. 6(3)(a)"],
+        "applicable_from": "2027-12-02",
+        "must_flag": ["self_assessment_documentation", "registration_simplified", "not_legal_advice"]
+      },
+      "rationale": "Annex III area but narrow procedural task → Art. 6(3) derogation. Omnibus simplified the registration content (Annex VIII B pts 7 & 9 deleted) but registration obligation remains."
+    },
+    {
+      "id": "N02-biometric-verification",
+      "input": "A bank app uses on-device face verification (1:1 match) to let a customer unlock their own account.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "minimal",
+        "primary_articles": ["Annex III 1(a) exclusion (verification)"],
+        "applicable_from": null,
+        "must_flag": ["not_legal_advice"]
+      },
+      "rationale": "1:1 biometric VERIFICATION is explicitly excluded from the biometric identification high-risk category. Common false-positive trap."
+    },
+    {
+      "id": "N03-motor-insurance-pricing",
+      "input": "An insurer uses AI for risk assessment and premium pricing of motor (car) insurance for consumers.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "minimal",
+        "primary_articles": ["Annex III 5(c) scope limited to life and health insurance"],
+        "applicable_from": null,
+        "must_flag": ["not_legal_advice"]
+      },
+      "rationale": "Annex III 5(c) covers only life and health insurance — motor/property pricing is NOT high-risk under the AI Act (other law may apply). Key sector discriminator; naive checkers over-classify."
+    },
+    {
+      "id": "A01-medical-device",
+      "input": "A vendor embeds an AI diagnostic-support algorithm in a CE-marked medical device (MDR class IIa).",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "high",
+        "primary_articles": ["Art. 6(1)", "Annex I Section A (MDR)"],
+        "applicable_from": "2028-08-02",
+        "must_flag": ["human_review", "sectoral_law_applies_now", "not_legal_advice"]
+      },
+      "rationale": "Annex I Section A product: AI Act HRAIS obligations deferred by Omnibus to 2 Aug 2028; MDR applies in the meantime."
+    },
+    {
+      "id": "A02-machinery-omnibus",
+      "input": "A manufacturer integrates an AI-based safety controller in industrial machinery covered by the Machinery Regulation (EU) 2023/1230.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "sectoral_lead_annex_I_section_B",
+        "primary_articles": ["Annex I Section B (Machinery Regulation, post-Omnibus)"],
+        "applicable_from": "2028-08-02",
+        "must_flag": ["sectoral_law_applies", "not_legal_advice"]
+      },
+      "rationale": "OMNIBUS STRUCTURAL CHANGE: Machinery Regulation moved from Annex I Section A to Section B — no parallel AI Act Chapter III compliance; machinery framework leads (AI requirements via delegated acts by Aug 2028). Pre-Omnibus checkers will wrongly classify as dual-compliance Section A."
+    },
+    {
+      "id": "T01-chatbot",
+      "input": "An insurer deploys a customer-service chatbot for claims intake; customers might think they chat with a human.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "limited",
+        "primary_articles": ["Art. 50(1)"],
+        "applicable_from": "2026-08-02",
+        "must_flag": ["transparency_disclosure", "not_legal_advice"]
+      },
+      "rationale": "Interaction transparency: users must be informed they are dealing with AI."
+    },
+    {
+      "id": "T02-deepfake-ad",
+      "input": "A marketing agency creates a deepfake video of a (consenting, contracted) celebrity for an ad campaign.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "limited",
+        "primary_articles": ["Art. 50(4)"],
+        "applicable_from": "2026-08-02",
+        "must_flag": ["deepfake_labeling", "not_legal_advice"]
+      },
+      "rationale": "Deepfake content must be disclosed as artificially generated/manipulated. Consent removes the new Art. 5 NCII issue but not the labeling duty."
+    },
+    {
+      "id": "T03-watermarking-dates",
+      "input": "A text-to-image generation SaaS was launched on the EU market in March 2026. When must its outputs be marked machine-readable as AI-generated?",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "limited",
+        "primary_articles": ["Art. 50(2)"],
+        "applicable_from": "2026-12-02",
+        "must_flag": ["marking_deadline_2026_12_02", "not_legal_advice"]
+      },
+      "rationale": "OMNIBUS TEMPORAL RULE: systems placed on the market BEFORE 2 Aug 2026 get deferral to 2 Dec 2026; systems placed after 2 Aug 2026 must comply immediately. Answer '2 Aug 2026' = outdated; answer 'immediately' = wrong for this launch date."
+    },
+    {
+      "id": "G01-downstream-hr",
+      "input": "A company fine-tunes an open-weight general-purpose model and sells it as an applicant-ranking product for recruiters.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "high",
+        "primary_articles": ["Annex III 4(a)", "Art. 25", "GPAI value-chain provisions"],
+        "applicable_from": "2027-12-02",
+        "must_flag": ["downstream_provider_obligations", "human_review", "not_legal_advice"]
+      },
+      "rationale": "Downstream actor becomes provider of a high-risk system; Omnibus sharpened Art. 25(2)/(4) information-sharing duties (now in the 3%-fine band)."
+    },
+    {
+      "id": "G02-frontier-model",
+      "input": "A lab trains a general-purpose foundation model using more than 10^25 FLOPs of compute and offers API access in the EU.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "gpai_systemic_risk",
+        "primary_articles": ["Art. 51", "Art. 55"],
+        "applicable_from": "2025-08-02",
+        "must_flag": ["gpai_systemic_obligations", "not_legal_advice"]
+      },
+      "rationale": "GPAI with systemic risk (10^25 FLOPs presumption); obligations in force since Aug 2025."
+    },
+    {
+      "id": "M01-spam-filter",
+      "input": "A SaaS email product uses machine learning to filter spam and phishing emails.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "minimal",
+        "primary_articles": [],
+        "applicable_from": null,
+        "must_flag": ["not_legal_advice"]
+      },
+      "rationale": "Classic minimal-risk example; no Art. 50 duty (no human-interaction impersonation, no content generation)."
+    },
+    {
+      "id": "M02-demand-forecast",
+      "input": "A bakery chain uses AI to forecast bread demand for inventory planning.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "minimal",
+        "primary_articles": [],
+        "applicable_from": null,
+        "must_flag": ["not_legal_advice"]
+      },
+      "rationale": "Business-optimization AI without natural-person impact; also note Omnibus-refined 'safety component' definition: optimization/efficiency use ≠ safety component."
+    },
+    {
+      "id": "S01-military",
+      "input": "A defense contractor develops an AI targeting system exclusively for military use by an EU member state's armed forces.",
+      "expected": {
+        "scope": "out_of_scope",
+        "risk_tier": "out_of_scope",
+        "primary_articles": ["Art. 2(3)"],
+        "applicable_from": null,
+        "must_flag": ["out_of_scope_military", "not_legal_advice"]
+      },
+      "rationale": "Exclusive military/defence purpose is outside AI Act scope."
+    },
+    {
+      "id": "S02-rt-rbi-exception",
+      "input": "Police request real-time facial recognition in a public square, limited to searching for a specific missing child, with prior judicial authorization under national law.",
+      "expected": {
+        "scope": "in_scope",
+        "risk_tier": "high",
+        "primary_articles": ["Art. 5(1)(h)(i) exception", "Annex III 1(a)", "Art. 26(10)"],
+        "applicable_from": "2027-12-02",
+        "must_flag": ["narrow_exception_conditions", "human_review", "not_legal_advice"]
+      },
+      "rationale": "Real-time RBI in public for law enforcement is prohibited BY DEFAULT, but targeted search for a missing person with authorization is an enumerated exception — the use remains high-risk with strict conditions. Tests exception-handling: blanket 'prohibited' or blanket 'allowed' both fail."
+    }
+  ]
+}

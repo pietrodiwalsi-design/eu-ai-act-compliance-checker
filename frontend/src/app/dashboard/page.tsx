@@ -1,9 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { Assessment } from '@/types/assessment';
-import TrafficLight from '@/components/compliance/TrafficLight';
 
 const TIER_LABELS: Record<string, string> = {
   prohibited:   '🚫 Prohibited',
@@ -20,21 +18,21 @@ interface LocalReport {
   system_description: string;
 }
 
-export default function DashboardPage() {
-  const [assessments, setAssessments] = useState<LocalReport[]>([]);
-  const [loading, setLoading] = useState(true);
+// Read from localStorage once, synchronously, during initial render —
+// avoids the extra render + "setState in effect" lint warning that comes
+// from reading it inside a useEffect body just to call setState().
+function readAssessmentsFromLocalStorage(): LocalReport[] {
+  if (typeof window === 'undefined') return []; // SSR/build-time guard
+  try {
+    return JSON.parse(localStorage.getItem('reports_index') || '[]');
+  } catch {
+    return [];
+  }
+}
 
-  useEffect(() => {
-    // Read from localStorage — persists across sessions on same device
-    try {
-      const index = JSON.parse(localStorage.getItem('reports_index') || '[]');
-      setAssessments(index);
-    } catch (_) {
-      setAssessments([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+export default function DashboardPage() {
+  const [assessments] = useState<LocalReport[]>(readAssessmentsFromLocalStorage);
+  const [loading] = useState(false);
 
   return (
     <main className="min-h-screen bg-slate-900 text-white">

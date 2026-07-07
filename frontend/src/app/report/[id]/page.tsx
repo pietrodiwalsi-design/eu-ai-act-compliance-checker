@@ -10,10 +10,24 @@ interface ReportPageProps {
   params: Promise<{ id: string }>;
 }
 
+// Synchronous localStorage read, used as the useState lazy initializer so
+// we never need to setState() from inside an effect just to reflect a
+// value we could read immediately during render (avoids the React
+// "setState in effect" lint error).
+function readCachedReport(id: string): ComplianceReport | null {
+  if (typeof window === 'undefined') return null; // SSR/build-time guard
+  try {
+    const cached = localStorage.getItem(`report_${id}`);
+    return cached ? JSON.parse(cached) : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function ReportPage({ params }: ReportPageProps) {
   const { id } = use(params);
-  const [report, setReport] = useState<ComplianceReport | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [report, setReport] = useState<ComplianceReport | null>(() => readCachedReport(id));
+  const [loading, setLoading] = useState(() => readCachedReport(id) === null);
   const [error, setError] = useState<string | null>(null);
 
   // What-If state
@@ -23,15 +37,9 @@ export default function ReportPage({ params }: ReportPageProps) {
   const [whatIfLoading, setWhatIfLoading] = useState(false);
 
   useEffect(() => {
-    // Check localStorage first (persists across browser sessions)
-    try {
-      const cached = localStorage.getItem(`report_${id}`);
-      if (cached) {
-        setReport(JSON.parse(cached));
-        setLoading(false);
-        return;
-      }
-    } catch (_) {}
+    // Report was already found in localStorage during the lazy state init
+    // above — nothing to fetch.
+    if (report) return;
 
     // Fallback: fetch from API
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
@@ -43,7 +51,9 @@ export default function ReportPage({ params }: ReportPageProps) {
       .then(setReport)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, [id]);
+    // Intentionally only re-run when `id` changes, not on every `report`
+    // state update (that would re-trigger the fetch after we just set it).
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleExportPDF = () => {
     // Simple browser print with print-optimized styles
@@ -70,8 +80,9 @@ export default function ReportPage({ params }: ReportPageProps) {
       if (!res.ok) throw new Error('What-If analysis failed');
       const data: WhatIfResponse = await res.json();
       setWhatIfResult(data);
-    } catch (e: any) {
-      alert(e.message || 'What-If analysis failed');
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'What-If analysis failed';
+      alert(message);
     } finally {
       setWhatIfLoading(false);
     }
@@ -160,7 +171,7 @@ export default function ReportPage({ params }: ReportPageProps) {
                     </div>
                   )}
                   {check.source_citation && (
-                    <p className="text-xs text-slate-500 mt-2 italic print:text-gray-600">"{check.source_citation}"</p>
+                    <p className="text-xs text-slate-500 mt-2 italic print:text-gray-600">&quot;{check.source_citation}&quot;</p>
                   )}
                 </div>
               </div>
