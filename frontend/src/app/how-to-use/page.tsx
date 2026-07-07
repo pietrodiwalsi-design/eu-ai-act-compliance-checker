@@ -25,7 +25,7 @@ export default function HowToUsePage() {
             <h2 className="text-xl font-semibold text-white mb-4">1. Start an Assessment</h2>
             <p className="mb-2">Click on <strong>New Assessment</strong> to begin the intake wizard. You will be asked 15 clear questions about your AI system, covering:</p>
             <ul className="list-disc pl-6 space-y-1">
-              <li>The system's main purpose and sector.</li>
+              <li>The system&apos;s main purpose and sector.</li>
               <li>Whether it makes decisions affecting individuals or uses biometric data.</li>
               <li>Details about training data, logging, and human oversight.</li>
             </ul>

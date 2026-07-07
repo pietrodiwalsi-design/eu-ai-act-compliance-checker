@@ -48,6 +48,12 @@ services:
         value: ""            # empty = same-origin proxy via route handler
       - key: BACKEND_URL
         sync: false          # set to https://eu-ai-backend.onrender.com after backend deploys
+      - key: BACKEND_API_KEY
+        sync: false          # MUST match the backend's API_KEY value above — set manually in
+                              # Render dashboard. Without this, the proxy route
+                              # (src/app/api/v1/[...path]/route.ts) can never obtain a JWT
+                              # from /auth/token, and every proxied request goes out with no
+                              # Authorization header (found missing during 2026-07-07 QA review).
       - key: NODE_ENV
         value: production
       - key: PORT

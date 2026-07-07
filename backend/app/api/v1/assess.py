@@ -28,9 +28,7 @@ from app.services.deterministic_checks import run_deterministic_checks
 from app.services.persistence import list_assessments as persistence_list_assessments, load_report, save_assessment, save_report
 from app.services.rag import rag_pipeline
 from app.services.remediation import calculate_overall_score, enrich_checks_with_remediation
-from langchain_anthropic import ChatAnthropic
 from app.prompts.classification import WHAT_IF_PROMPT
-import os
 
 router = APIRouter()
 
@@ -133,13 +131,12 @@ async def what_if_analysis(request: WhatIfRequest, _: TokenData = Depends(get_cu
     """
     original_tier = classify_risk_tier(request.original_answers)
 
-    llm = ChatAnthropic(
-        model="claude-3-5-sonnet-20241022",
-        api_key=os.getenv("ANTHROPIC_API_KEY"),
-        temperature=0.3,
-    )
-
-    chain = WHAT_IF_PROMPT | llm
+    # Reuse the same provider instance the rest of the app uses (selected via
+    # LLM_PROVIDER / whichever key is configured) instead of a hardcoded
+    # ChatAnthropic client. Previously this endpoint always required
+    # ANTHROPIC_API_KEY specifically and crashed on providers-only-Groq/xAI
+    # deployments — found during 2026-07-07 QA review.
+    chain = WHAT_IF_PROMPT | rag_pipeline._llm
     response = await chain.ainvoke({
         "answers": request.original_answers,
         "original_tier": original_tier.value,

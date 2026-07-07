@@ -45,7 +45,22 @@ class RAGPipeline:
 
     def __init__(self) -> None:
         self._articles: List[Tuple[str, str]] = []   # (filename, content)
-        self._llm = self._build_llm()
+        # Lazy: NOT built here. `rag_pipeline = RAGPipeline()` below runs at
+        # module-IMPORT time (as soon as anything does `from app.services.rag
+        # import rag_pipeline`), which is earlier than the FastAPI lifespan
+        # hook that the module docstring/comments describe. Building the LLM
+        # client eagerly here meant importing this module at all — including
+        # from test collection, tooling, or any other module that merely
+        # needs e.g. `retrieve_relevant_articles` — crashed hard whenever no
+        # provider API key was configured. Found during 2026-07-07 QA review.
+        self.__llm: Any = None
+
+    @property
+    def _llm(self) -> Any:
+        """Build the LLM client on first actual use, not on import/construction."""
+        if self.__llm is None:
+            self.__llm = self._build_llm()
+        return self.__llm
 
     # ── LLM factory ───────────────────────────────────────────────────────────
 
@@ -140,7 +155,7 @@ class RAGPipeline:
 
     def load_knowledge_base(self) -> None:
         """Load all EU AI Act .txt files into memory. Called once on startup."""
-        kb_dir = Path(settings.KNOWLEDGE_BASE_DIR)
+        kb_dir = settings.knowledge_base_path
         if not kb_dir.exists():
             logger.warning("Knowledge base directory not found: %s", kb_dir)
             return
