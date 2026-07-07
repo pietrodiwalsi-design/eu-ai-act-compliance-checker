@@ -9,12 +9,26 @@ class Settings(BaseSettings):
     APP_VERSION: str = "0.1.0"
     DEBUG:       bool = False
 
-    # LLM — priority: Groq (free/OSS) → Anthropic → OpenAI
+    # LLM provider selection — explicit, no silent fallback chain.
+    # One of: "groq" | "xai" | "anthropic" | "openai"
+    # If unset, falls back to legacy auto-detect (Groq -> Anthropic -> OpenAI)
+    # for backward compatibility with existing deployments.
+    LLM_PROVIDER: str = ""
+
+    # Groq (free/OSS)
     GROQ_API_KEY:      str = ""                        # free at console.groq.com
     GROQ_LLM_MODEL:    str = "llama-3.3-70b-versatile" # best free Groq model
+
+    # xAI (Grok)
+    XAI_API_KEY:       str = ""                        # loaded from /root/.secrets/eu-ai-act.env, never from repo .env
+    XAI_LLM_MODEL:      str = "grok-4-fast"
+
+    # Anthropic (fallback)
     ANTHROPIC_API_KEY: str = ""
-    OPENAI_API_KEY:    str = ""
     LLM_MODEL:         str = "claude-sonnet-4-5"        # Anthropic fallback
+
+    # OpenAI (last resort)
+    OPENAI_API_KEY:    str = ""
     LLM_FALLBACK:      str = "gpt-4o"                  # OpenAI last resort
 
     # Vector store (Chroma)

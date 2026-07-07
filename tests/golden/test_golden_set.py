@@ -23,6 +23,7 @@ Design notes:
 """
 
 import json
+import sys
 from pathlib import Path
 
 import pytest
@@ -30,15 +31,65 @@ import pytest
 GOLDEN = json.loads((Path(__file__).parent / "golden-set-v1.json").read_text())
 CASES = GOLDEN["cases"]
 
+# Make `app` importable (tests/golden/ -> repo root -> backend/)
+BACKEND_DIR = Path(__file__).resolve().parents[2] / "backend"
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(BACKEND_DIR))
+
 
 # ---------------------------------------------------------------------------
-# TODO(Moshe): wire this adapter to the real engine (app/services/...).
-# Keep it thin: input string in, normalized dict out. No mocking the engine.
+# Adapter: calls the REAL RAG pipeline (same knowledge-base retrieval + same
+# LLM instance as production, selected via LLM_PROVIDER) against golden-set
+# free-text scenarios. Not mocked. See app/prompts/golden_set_classification.py
+# for why a dedicated prompt is used instead of the wizard-answers prompt.
 # ---------------------------------------------------------------------------
 def classify(case_input: str) -> dict:
-    raise NotImplementedError(
-        "Wire classify() to the compliance engine before running the suite."
-    )
+    import asyncio
+    import json as _json
+
+    from app.services.rag import rag_pipeline
+    from app.prompts.golden_set_classification import GOLDEN_SET_CLASSIFICATION_PROMPT
+
+    async def _run() -> dict:
+        if not rag_pipeline._articles:
+            rag_pipeline.load_knowledge_base()
+
+        retrieved = rag_pipeline.retrieve_relevant_articles(case_input)
+        chain = GOLDEN_SET_CLASSIFICATION_PROMPT | rag_pipeline._llm
+        response = await chain.ainvoke({
+            "scenario": case_input,
+            "retrieved_articles": retrieved,
+        })
+
+        raw = response.content if hasattr(response, "content") else str(response)
+        raw = raw.strip()
+        # Strip markdown fences if the model added them despite instructions.
+        if raw.startswith("```"):
+            raw = raw.strip("`")
+            if raw.lower().startswith("json"):
+                raw = raw[4:]
+            raw = raw.strip()
+
+        try:
+            parsed = _json.loads(raw)
+        except _json.JSONDecodeError as exc:
+            return {
+                "risk_tier": "__parse_error__",
+                "articles": [],
+                "applicable_from": None,
+                "flags": [],
+                "rationale": f"JSON parse error: {exc}. Raw (truncated): {raw[:300]!r}",
+            }
+
+        return {
+            "risk_tier": parsed.get("risk_tier"),
+            "articles": parsed.get("articles", []) or [],
+            "applicable_from": parsed.get("applicable_from"),
+            "flags": parsed.get("flags", []) or [],
+            "rationale": parsed.get("rationale", ""),
+        }
+
+    return asyncio.run(_run())
 
 
 def _norm_articles(arts):

@@ -23,6 +23,7 @@ from typing import Any, Dict, List, Tuple
 from langchain_anthropic import ChatAnthropic
 from langchain_groq import ChatGroq
 from langchain_openai import ChatOpenAI
+from langchain_xai import ChatXAI
 
 from app.core.config import settings
 from app.models.assessment import ComplianceCheck, RiskTier
@@ -49,35 +50,90 @@ class RAGPipeline:
     # ── LLM factory ───────────────────────────────────────────────────────────
 
     def _build_llm(self) -> Any:
-        # 1️⃣  Groq — free, open-source Llama 3.3 70B (preferred)
-        if settings.GROQ_API_KEY:
-            logger.info("Using Groq: %s", settings.GROQ_LLM_MODEL)
-            return ChatGroq(
-                model=settings.GROQ_LLM_MODEL,
-                api_key=settings.GROQ_API_KEY,
-                temperature=0,
-                max_tokens=4096,
-            )
-        # 2️⃣  Anthropic Claude — fallback
-        if settings.ANTHROPIC_API_KEY:
-            logger.info("Using Anthropic Claude: %s", settings.LLM_MODEL)
-            return ChatAnthropic(
-                model=settings.LLM_MODEL,
-                api_key=settings.ANTHROPIC_API_KEY,
-                max_tokens=4096,
-                temperature=0,
-            )
-        # 3️⃣  OpenAI — last resort
-        if settings.OPENAI_API_KEY:
-            logger.info("Using OpenAI fallback: %s", settings.LLM_FALLBACK)
-            return ChatOpenAI(
-                model=settings.LLM_FALLBACK,
-                api_key=settings.OPENAI_API_KEY,
-                temperature=0,
-            )
+        """
+        Provider factory. Explicit selection via LLM_PROVIDER env var
+        ("groq" | "xai" | "anthropic" | "openai") makes provider choice a
+        configuration decision, not a code change.
+
+        If LLM_PROVIDER is unset, falls back to legacy auto-detect order
+        (Groq -> Anthropic -> OpenAI) for backward compatibility with
+        existing deployments that never set the new var.
+        """
+        provider = (settings.LLM_PROVIDER or "").strip().lower()
+
+        builders = {
+            "groq": self._build_groq,
+            "xai": self._build_xai,
+            "anthropic": self._build_anthropic,
+            "openai": self._build_openai,
+        }
+
+        if provider:
+            if provider not in builders:
+                raise RuntimeError(
+                    f"Unknown LLM_PROVIDER '{provider}' — expected one of "
+                    f"{sorted(builders)}"
+                )
+            llm = builders[provider]()
+            if llm is None:
+                raise RuntimeError(
+                    f"LLM_PROVIDER='{provider}' selected but its API key is not "
+                    "configured (check env / /root/.secrets/eu-ai-act.env)."
+                )
+            return llm
+
+        # Legacy auto-detect (unchanged default behaviour)
+        for name in ("groq", "anthropic", "openai"):
+            llm = builders[name]()
+            if llm is not None:
+                return llm
+
         raise RuntimeError(
-            "No LLM API key configured — set GROQ_API_KEY (free), "
-            "ANTHROPIC_API_KEY, or OPENAI_API_KEY in .env"
+            "No LLM API key configured — set LLM_PROVIDER + the matching key "
+            "(GROQ_API_KEY, XAI_API_KEY, ANTHROPIC_API_KEY, or OPENAI_API_KEY)."
+        )
+
+    def _build_groq(self) -> Any:
+        if not settings.GROQ_API_KEY:
+            return None
+        logger.info("Using Groq: %s", settings.GROQ_LLM_MODEL)
+        return ChatGroq(
+            model=settings.GROQ_LLM_MODEL,
+            api_key=settings.GROQ_API_KEY,
+            temperature=0,
+            max_tokens=4096,
+        )
+
+    def _build_xai(self) -> Any:
+        if not settings.XAI_API_KEY:
+            return None
+        logger.info("Using xAI: %s", settings.XAI_LLM_MODEL)
+        return ChatXAI(
+            model=settings.XAI_LLM_MODEL,
+            api_key=settings.XAI_API_KEY,
+            temperature=0,
+            max_tokens=4096,
+        )
+
+    def _build_anthropic(self) -> Any:
+        if not settings.ANTHROPIC_API_KEY:
+            return None
+        logger.info("Using Anthropic Claude: %s", settings.LLM_MODEL)
+        return ChatAnthropic(
+            model=settings.LLM_MODEL,
+            api_key=settings.ANTHROPIC_API_KEY,
+            max_tokens=4096,
+            temperature=0,
+        )
+
+    def _build_openai(self) -> Any:
+        if not settings.OPENAI_API_KEY:
+            return None
+        logger.info("Using OpenAI fallback: %s", settings.LLM_FALLBACK)
+        return ChatOpenAI(
+            model=settings.LLM_FALLBACK,
+            api_key=settings.OPENAI_API_KEY,
+            temperature=0,
         )
 
     # ── Knowledge base loading ────────────────────────────────────────────────

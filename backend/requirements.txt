@@ -6,6 +6,7 @@ uvicorn[standard]>=0.32.0
 langchain>=0.3.7
 langchain-core>=0.3.17
 langchain-groq>=0.2.0
+langchain-xai>=1.2.2
 langchain-anthropic>=0.3.0
 langchain-openai>=0.2.9
 langchain-community>=0.3.7
