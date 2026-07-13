@@ -6,7 +6,10 @@ services:
     rootDir: backend
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
-    plan: free
+    plan: starter   # upgraded from free 2026-07-13 — free tier's spin-down after
+                    # inactivity caused the frontend/backend to wake up
+                    # independently, hitting cold-start timeouts on first use.
+                    # Starter plan has no spin-down.
     envVars:
       - key: LLM_PROVIDER
         value: xai            # explicit provider selection — Peter/Fable agreed 2026-07-06
@@ -46,7 +49,8 @@ services:
       - key: API_KEY
         sync: false          # set manually in Render dashboard — your secret API key
       - key: FRONTEND_URL
-        sync: false          # set to https://eu-ai-frontend.onrender.com after frontend deploys
+        sync: false          # set to https://eu-ai-act-front-end.onrender.com (actual live URL;
+                              # differs from this file's service name below)
 
   # ── Frontend: Next.js ────────────────────────────────────────────────────────
   - type: web
@@ -55,12 +59,13 @@ services:
     rootDir: frontend
     buildCommand: npm install --include=dev && npm run build
     startCommand: npm start
-    plan: free
+    plan: starter   # upgraded from free 2026-07-13 — see backend service above for rationale
     envVars:
       - key: NEXT_PUBLIC_API_URL
         value: ""            # empty = same-origin proxy via route handler
       - key: BACKEND_URL
-        sync: false          # set to https://eu-ai-backend.onrender.com after backend deploys
+        sync: false          # set to https://eu-ai-act-compliance-checker.onrender.com (actual
+                              # live URL; differs from this file's service name above)
       - key: BACKEND_API_KEY
         sync: false          # MUST match the backend's API_KEY value above — set manually in
                               # Render dashboard. Without this, the proxy route
