@@ -4,6 +4,8 @@ Remediation engine — maps compliance gaps to actionable remediation steps.
 Phase 1: lookup table per article + risk tier.
 Phase 2: LLM-generated bespoke remediation with LangChain.
 """
+from typing import Optional
+
 from app.models.assessment import ComplianceCheck, RiskTier
 
 # Per-article remediation playbook
@@ -47,9 +49,17 @@ def enrich_checks_with_remediation(
     return enriched
 
 
-def calculate_overall_score(checks: list[ComplianceCheck]) -> int:
-    """Weighted average score across all applicable checks."""
+def calculate_overall_score(checks: list[ComplianceCheck]) -> Optional[int]:
+    """
+    Weighted average score across all applicable (non-"na") checks.
+
+    FIX 1: absence of evidence must never be scored as compliance. If there
+    are zero applicable/scoreable checks, that means we could not assess
+    anything — return None ("not assessed"), NOT a perfect 100. Callers
+    (API, MCP tools, UI) must render None as "niet beoordeeld", never as a
+    numeric score.
+    """
     applicable = [c for c in checks if c.status != "na"]
     if not applicable:
-        return 100
+        return None
     return round(sum(c.score for c in applicable) / len(applicable))

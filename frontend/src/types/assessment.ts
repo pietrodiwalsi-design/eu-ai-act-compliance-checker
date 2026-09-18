@@ -10,13 +10,17 @@ export interface ComplianceCheck {
   rationale: string;
   remediation?: string;
   source_citation: string; // exact Act passage
+  self_declared?: boolean; // true if this "pass" rests only on the respondent's own claim, not verified evidence
+  evidence?: string | null; // description of the supporting artefact, if any
 }
 
 export interface ComplianceReport {
   id: string;
   assessment_id: string;
   risk_tier: RiskTier;
-  overall_score: number;   // 0–100
+  // null = "not assessed" (zero scoreable checks) — render as "niet
+  // beoordeeld", NEVER default this to a number in the UI.
+  overall_score: number | null;
   checks: ComplianceCheck[];
   generated_at: string;    // ISO datetime
   processing_time_seconds: number;

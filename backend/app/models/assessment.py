@@ -22,13 +22,21 @@ class ComplianceCheck(BaseModel):
     rationale:       str
     remediation:     Optional[str] = None
     source_citation: str                                    # exact Act passage
+    # Absence-of-evidence tracking: a check whose "pass" rests solely on the
+    # user's own wizard answer (no uploaded/verified artefact) must never be
+    # scored the same as a check backed by actual evidence. See FIX 3.
+    self_declared:   bool = False
+    evidence:        Optional[str] = None                   # description of supporting artefact, if any
 
 
 class ComplianceReport(BaseModel):
     id:                      str
     assessment_id:           str
     risk_tier:               RiskTier
-    overall_score:           int = Field(..., ge=0, le=100)
+    # Optional: None means "not assessed" (zero applicable/scoreable checks),
+    # which must be rendered as "niet beoordeeld" in the UI — NEVER as a
+    # numeric score, and NEVER coerced to 100. See FIX 1.
+    overall_score:           Optional[int] = Field(default=None, ge=0, le=100)
     checks:                  List[ComplianceCheck]
     generated_at:            datetime
     processing_time_seconds: float
