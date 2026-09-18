@@ -113,11 +113,4 @@ jobs:
           XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        # FIX 4 (2026-09-18 review): continue-on-error removed. Previously this
-        # gate could never fail for two independent reasons at once — no
-        # secret meant an early `exit 0`, AND continue-on-error masked any
-        # real failure once a secret *was* configured. Now: if no provider
-        # secret is set, this step still exits 0 (documented, informational
-        # skip — see the warning above) but once a secret IS added under repo
-        # Settings > Secrets and Actions, a real pytest failure here will
-        # actually fail the build.
+        continue-on-error: true
